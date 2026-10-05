@@ -1,0 +1,58 @@
+name: Architecture
+description: Propose an owner-gated app ADR or technical migration.
+title: ''
+type: Architecture
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This Issue produces a proposed ADR. Feature implementation remains blocked until the owner accepts the decision.
+  - type: input
+    id: source
+    attributes:
+      label: Product and planning source
+      description: Cite the product revision/amendment, parent epic or stories, and related ADRs.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Decision context
+      description: Explain the forced decision, current constraints, and why existing ADRs do not answer it.
+    validations:
+      required: true
+  - type: textarea
+    id: drivers
+    attributes:
+      label: Decision drivers
+      description: List the forces that should determine the choice.
+    validations:
+      required: true
+  - type: textarea
+    id: required_scope
+    attributes:
+      label: Required ADR scope
+      description: Name boundaries, data ownership, failure behavior, migration, security, and non-goals to cover.
+    validations:
+      required: true
+  - type: textarea
+    id: product_boundary
+    attributes:
+      label: Product boundary
+      description: State what approved behavior must remain unchanged and any product conflict needing steering.
+    validations:
+      required: true
+  - type: textarea
+    id: downstream
+    attributes:
+      label: Downstream Issues and verification
+      description: Link blocked work and state how the accepted decision will be enforced or tested.
+    validations:
+      required: true
+  - type: checkboxes
+    id: gate
+    attributes:
+      label: Owner gate
+      options:
+        - label: I understand that this Issue cannot accept its own ADR or authorize dependent feature work.
+          required: true

@@ -1,0 +1,57 @@
+# CI for the 1n1 website repository. Pins are immutable commit SHAs for the documented major action
+# versions, taken from app-dayweave's workflow.
+#
+# A draft pull request runs nothing (owner decision, 2026-09-23). CI runs when one is marked ready
+# for review and on pushes after that. `ready_for_review` is listed explicitly because naming any
+# `types` replaces the default set, and the default does not include it.
+#
+# Deployment to GitHub Pages is a separate workflow that E2-A1 adds with the site tooling; this one
+# only verifies.
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, ready_for_review, synchronize]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    if: github.event.pull_request.draft != true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24.18.0
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - run: bun install --frozen-lockfile
+
+      # Gate 1: static. E2-A1 adds `lint` and `typecheck` here with the tooling.
+      - run: bun run format:check
+      - run: bun run deps:trust-check
+      - name: Validate commit subjects
+        shell: bash
+        run: |
+          git log --format=%s "origin/${{ github.base_ref }}..HEAD" |
+            while IFS= read -r subject; do
+              bun scripts/check-commit-message.mjs --subject "$subject"
+            done
+
+      # Gate 2: tests and the built output. E2-A1 adds `build`, `check:links` and `check:a11y` here.
+      - run: bun run test
+
+      # Gate 3: governance
+      - run: bun scripts/check-adr-format.mjs
+      - name: Validate the pull-request body
+        if: github.event_name == 'pull_request'
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        shell: bash
+        run: printf '%s' "$PR_BODY" | bun scripts/check-pr-body.mjs -

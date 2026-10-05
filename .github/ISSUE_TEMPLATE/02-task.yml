@@ -1,0 +1,52 @@
+name: Task
+description: Define independently reviewable enabling or maintenance work.
+title: ''
+type: Task
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use Task only when the work is independently executable. Do not create an Issue for every coding step.
+  - type: input
+    id: source
+    attributes:
+      label: Source and parent
+      description: Cite the product revision, delivery-map ID or amendment, parent Issue, and ADR.
+    validations:
+      required: true
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: State the operational or enabling result, not a list of files to edit.
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Definition of done
+      description: List observable completion criteria and retained behavior.
+      placeholder: '- [ ] ...'
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints and non-goals
+      description: Cite accepted boundaries and state what this Task must not change.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and risks
+      description: Link blockers and explain migration, compatibility, or failure risks.
+    validations:
+      required: false
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Required test and review evidence
+      description: State the checks, tests, coverage, and artifacts required for review.
+    validations:
+      required: true
