@@ -1,0 +1,9 @@
+*.md
+bun.lock
+coverage/
+node_modules/
+dist/
+_site/
+# Signed design artifacts are committed verbatim, never reformatted.
+docs/design/*.html
+docs/design/**/*.dc.html
