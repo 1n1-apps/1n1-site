@@ -36,10 +36,13 @@ jobs:
       # Gate 1: static. E2-A1 adds `lint` and `typecheck` here with the tooling.
       - run: bun run format:check
       - run: bun run deps:trust-check
+      # The range ends at the PR head, not HEAD: on a pull request the checkout is GitHub's merge
+      # commit, whose "Merge <sha> into <sha>" subject fails the check.
       - name: Validate commit subjects
+        if: github.event_name == 'pull_request'
         shell: bash
         run: |
-          git log --format=%s "origin/${{ github.base_ref }}..HEAD" |
+          git log --format=%s "origin/${{ github.base_ref }}..${{ github.event.pull_request.head.sha }}" |
             while IFS= read -r subject; do
               bun scripts/check-commit-message.mjs --subject "$subject"
             done
