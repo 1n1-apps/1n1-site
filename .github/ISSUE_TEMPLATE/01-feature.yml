@@ -1,0 +1,67 @@
+name: Feature
+description: Define one user-observable vertical delivery outcome.
+title: ''
+type: Feature
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Creating this Issue does not authorize implementation. Only the owner may set its Project status to Ready.
+  - type: input
+    id: source
+    attributes:
+      label: Product source
+      description: Product revision, delivery-map ID, parent epic, and amendment when applicable.
+      placeholder: 'Revision 1; E1-S1; parent #12; amendment N/A'
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: User or operational outcome
+      description: Describe the complete observable result and why it matters.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: List observable behavior, important states, resilience, and accessibility requirements.
+      placeholder: '- [ ] ...'
+    validations:
+      required: true
+  - type: textarea
+    id: non_goals
+    attributes:
+      label: Non-goals
+      description: State nearby behavior this Issue deliberately does not include.
+    validations:
+      required: true
+  - type: textarea
+    id: decisions
+    attributes:
+      label: Product and architecture context
+      description: Cite the current brief/amendment and accepted ADRs; state binding constraints.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and failure behavior
+      description: Link genuine blockers and name boundary, migration, or compatibility concerns.
+    validations:
+      required: false
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Required test and review evidence
+      description: Name unit, component, integration, E2E, accessibility, and visual evidence required.
+    validations:
+      required: true
+  - type: textarea
+    id: questions
+    attributes:
+      label: Open questions
+      description: All blocking questions must be resolved before the owner sets Ready.
+    validations:
+      required: false

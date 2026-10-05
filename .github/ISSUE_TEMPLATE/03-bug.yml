@@ -1,0 +1,59 @@
+name: Bug
+description: Record a reproducible mismatch between approved and actual behavior.
+title: ''
+type: Bug
+body:
+  - type: input
+    id: source
+    attributes:
+      label: Product source
+      description: Cite the product revision/amendment and acceptance criterion defining expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior
+      description: State what happens, including relevant platform and state.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: State the already-approved behavior. Use product steering if the expectation is changing.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction
+      description: Give the smallest deterministic sequence, fixtures, and frequency.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact and affected data
+      description: Describe user impact, severity, stored-data risk, regression range, and workarounds.
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Definition of done
+      description: Include the failing regression test, expected fix behavior, edge cases, and retained behavior.
+      placeholder: '- [ ] ...'
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Attach logs without secrets or personal data, screenshots, recordings, and relevant links.
+    validations:
+      required: false

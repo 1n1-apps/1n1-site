@@ -1,0 +1,19 @@
+node_modules/
+
+# Factory-issued, expiring agent token
+.env*.local
+
+# Built output: the tooling E2-A1 chooses writes one of these
+dist/
+_site/
+.cache/
+
+# Test and tool output
+coverage/
+*.log
+*.tmp
+.pr-body.md
+
+# OS and editors
+.DS_Store
+Thumbs.db

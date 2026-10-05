@@ -1,0 +1,3 @@
+bun run deps:trust-check
+bun run test
+bun scripts/check-adr-format.mjs

@@ -1,0 +1,54 @@
+name: Epic
+description: Define a substantial owner-approved product outcome and its child stories.
+title: ''
+type: Epic
+body:
+  - type: markdown
+    attributes:
+      value: |
+        An Epic is a progress container, not a branch-sized implementation Issue and not a readiness signal for its children.
+  - type: input
+    id: source
+    attributes:
+      label: Product source
+      description: Cite the product revision, stable epic ID, amendment when applicable, and release.
+      placeholder: 'Revision 1; E1; amendment N/A; release v1'
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Product outcome
+      description: State the substantial user or business outcome completed by this Epic.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Included scope and non-goals
+      description: Define what belongs in this Epic and nearby work that does not.
+    validations:
+      required: true
+  - type: textarea
+    id: completion
+    attributes:
+      label: Completion criteria
+      description: State what must be observably true after required child Issues are done or dropped.
+      placeholder: '- [ ] ...'
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and release constraints
+      description: Link genuine blockers, sequencing, and release commitments.
+    validations:
+      required: false
+  - type: textarea
+    id: children
+    attributes:
+      label: Planned child stories
+      description: List stable story IDs and candidate titles. Create them as native sub-Issues.
+      placeholder: '- E1-S1: ...'
+    validations:
+      required: true
