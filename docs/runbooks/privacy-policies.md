@@ -1,7 +1,8 @@
 # Runbook: privacy policies
 
-One policy per app, at `/privacy/<app>` using the app's codename slug in the path and its store name
-in the text. A store is given this URL once and it never changes.
+One policy per app, at `/privacy/<app>/`, where `<app>` is the store name lowercased
+(`/privacy/meantime/`, as the brief fixes it), written in `src/privacy/<app>.md`. A store is given
+this URL once and it never changes.
 
 ## What a policy states
 
@@ -40,15 +41,24 @@ checked against. The PR's `Privacy policy check` line cites that record.
 
 ## Writing rules
 
-- Store name in the text (`Meantime`), codename only in the URL.
+- Store name in the text and the URL (`Meantime`, `/privacy/meantime/`); the codename never appears.
 - Second person for the reader, the studio by name, contractions by default.
 - Short sections with the headings above, so a person can find the one they came for.
 - The effective date is the date the change is deployed, in ISO form.
 
 ## Changing a policy
 
-- A change to what the app does with data changes the policy in the same release, with a new
-  effective date. Keep the URL. Git history is the record of previous versions.
+**The rule (owner, 2026-10-06):** an app and its policy never disagree.
+
+- **In the app's ticket:** any change to what the app does with data, a new SDK that can make a
+  request, a new permission, a new network endpoint, a change to what is stored or sent, carries a
+  policy change in the same delivery: a `1n1-site` PR, linked from the app's PR, written by this
+  runbook. The app PR's `Privacy policy check` line names it, or says why nothing changed.
+- **At every release of an app:** before the build goes to a store, check the policy against the
+  release (its permissions, its dependencies, its data runbooks). If anything differs, the policy PR
+  merges first, so the live policy is never behind the app people install.
+- A changed policy gets a new effective date. Keep the URL. Git history is the record of previous
+  versions.
 - Before Meantime's first store submission the policy must be live at its final URL; after
   submission, a changed policy may also need re-declaring in the store's data-safety form. Tell the
   owner which, in the PR.
