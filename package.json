@@ -20,6 +20,6 @@
     "typescript": "7.0.2"
   },
   "lint-staged": {
-    "*.{js,mjs,cjs,ts,json,yml,yaml,css,html,svg}": "prettier --write"
+    "*.{js,mjs,cjs,ts,json,yml,yaml,css,html}": "prettier --write"
   }
 }
