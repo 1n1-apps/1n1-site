@@ -23,6 +23,9 @@ place.
   HTTPS** on. `1n1.uk` is verified for Pages on the organization, so no other repository can claim
   it. `1n1-studio/records/github-pages.md` records each setting and the DNS records.
 - A deploy shows in the repository's Actions tab and as the `github-pages` environment.
+- The workflow can also be run by hand (`workflow_dispatch`), and it runs no checks of its own: what
+  stops a branch from deploying is the `github-pages` environment's deployment-branch rule, which
+  allows `main` only. Keep that rule when changing the environment.
 
 ## Rolling back
 

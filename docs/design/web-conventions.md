@@ -6,8 +6,10 @@ tokens these rules apply; `docs/runbooks/deploy.md` owns the build and hosting.
 ## Structure
 
 - Keep content, structure and presentation apart: content in the content files the tooling defines,
-  structure in templates, presentation in stylesheets. A page's text is never hard-coded in a
-  template or a script.
+  structure in templates, presentation in stylesheets. A page's content lives in its content file or
+  `src/_data/site.json`. Templates and scripts hold only interface labels (navigation, section
+  headings, table headers, the toggle's name), and each one is listed in `1n1-studio/copy/website.md`
+  like any other string.
 - One template per page kind (home, apps index, app page, contact, privacy policy). A new app is a
   content entry, not a new template.
 - URLs are lowercase, hyphenated, without a file extension, and stable: `/`, `/apps`, `/apps/<app>`,
@@ -29,11 +31,13 @@ tokens these rules apply; `docs/runbooks/deploy.md` owns the build and hosting.
 
 - Every colour, size, radius and font comes from `visual-system.md`'s tokens as custom properties.
   No literal colour in a stylesheet outside the token definitions.
-- Both colour schemes are first-class: tokens are defined for light and dark, and
-  `prefers-color-scheme` selects between them. Nothing is readable in one scheme only.
+- Both colour schemes are first-class: tokens are defined for dark (the default) and light, and the
+  theme toggle switches between them (ADR 0003). Nothing is readable in one scheme only.
 - Layout is fluid: a readable measure for text, a side gutter of at least 16 px at every width, no
   horizontal scrolling at 360 px, no fixed pixel widths on containers.
-- No inline `style` attributes, no `!important`, no utility-class framework without an ADR.
+- No inline `style` attributes, no `!important`, no utility-class framework without an ADR. One
+  exception: the brand mark is inlined from `1n1-studio`'s source SVG unchanged, and its `style`
+  attributes carry the colour tokens that let it follow the theme.
 - Fonts are self-hosted or system fonts. Nothing loads from a third-party host.
 
 ## Scripting
