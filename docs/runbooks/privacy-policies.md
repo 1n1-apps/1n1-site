@@ -30,14 +30,19 @@ hedging about things the app does not do.
 The app's code, never a document about it. Before writing or changing a policy, in the app's
 repository:
 
-- the permissions in its app config and native manifests;
+- the permissions in the **merged** Android manifest of a build (under
+  `android/app/build/intermediates/merged_manifest/`), which adds every dependency's permissions to
+  the app's own; and the generated main manifest, to tell what a release build keeps from what only a
+  debug build adds;
+- `allowBackup` in that manifest: it decides whether Android's backup holds the app's data;
 - every dependency that can make a network request, and what it sends (ads, billing, analytics,
   weather, crash reporting, fonts);
 - the app's own data runbooks (storage, export, notifications, ads) and accepted ADRs;
 - the app's in-app guide, which already answers "Which permissions does it ask for?".
 
 Record the check in the plan: each statement in the policy, and the file or dependency it was
-checked against. The PR's `Privacy policy check` line cites that record.
+checked against. The site PR's description cites that record. The plan is public: name the app by its
+store name and its repository as "the app repository", never by codename.
 
 ## Writing rules
 

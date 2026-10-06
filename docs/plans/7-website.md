@@ -70,7 +70,7 @@ policy is a content file and a PR.
 ### URLs by store name
 
 - **Chosen:** `/apps/meantime/` and `/privacy/meantime/`.
-- **Alternatives:** the codename (`dayweave`) in the URL.
+- **Alternatives:** the app's internal codename in the URL.
 - **Why this one:** the Issue fixes `/privacy/meantime`, and a codename would leak an internal name.
 - **Reversible?** No, once the URL is given to Play. It is fixed here on purpose.
 
@@ -120,28 +120,45 @@ policy is a content file and a PR.
 
 ## Privacy-policy check
 
-Checked on 2026-10-06 against `app-dayweave` `origin/main` at `48803933`. The ads statements were
-checked against `origin/feature/389-respectful-ads`.
+Checked on 2026-10-06 against the Meantime app repository's `main` at `48803933`, and against its
+open ads PR (#417) for the ads statements. The permissions come from the merged Android manifest of a
+build of that PR, which is what an installed app actually declares, plus the generated main manifest
+for the release-only view. Paths below are inside the app repository.
 
 | Policy statement | Source |
 | --- | --- |
-| Plans, alarms, logs, places and settings stay on the phone; no server, no account | Local SQLite only. No backend client and no account code; no analytics or crash SDK in `package.json` |
-| Android backup may include the data | `allowBackup` is unset in `app.json`, so Android's default (on) applies |
-| Approximate location goes to MET Norway, rounded to about 11 m, nothing else sent with it | `src/adapters/weather/MetNoForecastAdapter.ts:26,86` (`api.met.no`); `src/domain/weather/place.ts:50` rounds to four decimals |
-| Location is approximate only | `app.json:22` blocks `ACCESS_FINE_LOCATION`; `app.json:50-52` asks for when-in-use only |
-| Place search uses Android's geocoder (Google on most phones) | `src/adapters/location/ExpoLocationAdapter.ts:102,116` (`reverseGeocodeAsync`, `geocodeAsync`) |
+| Plans, alarms, logs, places and settings stay on the phone; no server, no account | Local SQLite only. No backend client or account code; no analytics or crash SDK in `package.json` |
+| Android's backup includes the data and can restore it | The generated main manifest sets `allowBackup="true"` (Expo's default; `app.json` leaves it unset) |
+| Export data writes a file the person saves or shares | `src/adapters/files/ExpoTransferFilesAdapter.ts` (`expo-file-system`, `expo-sharing`); the label is in `src/screens/Settings/dataManagementCopy.ts:93` |
+| Coordinates to four decimal places go to MET Norway | `src/adapters/weather/MetNoForecastAdapter.ts:26,86`; `src/domain/weather/place.ts:50` rounds to four decimals |
+| The forecast refreshes in the background about once an hour | `src/adapters/weather/backgroundForecastRefresh.ts:12` (`REFRESH_INTERVAL_MINUTES = 60`) |
+| No account, name or other personal detail goes with the request | The request carries the coordinates and the app's `User-Agent` (`MetNoForecastAdapter.ts:29,89`) only |
+| Location is approximate only | `app.json:22` blocks `ACCESS_FINE_LOCATION`; `app.json:50-52` asks for when-in-use only; the merged manifest has `ACCESS_COARSE_LOCATION` only |
+| Place search and naming use Android's geocoder (Google on most phones) | `src/adapters/location/ExpoLocationAdapter.ts:102,116` (`reverseGeocodeAsync` names the current place; `geocodeAsync` searches) |
 | You can type a place instead | `src/screens/Settings/settingsCopy.ts:360` ("Search for a place") |
-| Plus is bought through Google Play; Meantime learns only whether Plus is active | `src/adapters/billing/PlayBillingAdapter.ts` over `modules/dayweave-billing` |
-| Ads from AdMob with Google's consent form; Plus removes ads | Ads branch: `package.json:26` (`react-native-google-mobile-ads` 17.2.0); `src/adapters/ads/createGoogleMobileAds.tsx:54` (`AdsConsent`) |
+| Plus is bought through Google Play; Meantime learns only whether Plus is active | `src/adapters/billing/PlayBillingAdapter.ts` over the app's billing module; merged manifest: `com.android.vending.BILLING` |
+| Ads from AdMob; consent asked where the law requires it; changeable under Privacy choices; Plus removes ads | Ads PR: `package.json:26` (`react-native-google-mobile-ads` 17.2.0); `src/adapters/ads/createGoogleMobileAds.tsx:54-59` (UMP `requestInfoUpdate`, `showPrivacyOptionsForm`); `src/state/ads/AdsProvider.tsx:102` (no ad until `canRequestAds`); `src/screens/Settings/settingsCopy.ts:53` ("Privacy choices"). No non-personalised flag, so outside consent regions ads may be personalised; the policy says consent applies "where the law requires it" |
 | Declining location: the app works, but no weather | Owner, 2026-10-06 |
-| Notifications, exact alarms and full-screen alerts so alarms ring on time; declining means no alarms reach the phone | `expo-notifications` `requestPermissionsAsync` (`ExpoNotificationSchedulerAdapter.ts:78`); `modules/` manifests declare `SCHEDULE_EXACT_ALARM`, `USE_EXACT_ALARM`, `USE_FULL_SCREEN_INTENT`; owner, 2026-10-06 |
-| Restarting alarms after reboot, staying awake, vibrating, playing sound ask for nothing | `modules/` manifests: `RECEIVE_BOOT_COMPLETED`, `WAKE_LOCK`, `VIBRATE`, `FOREGROUND_SERVICE(_MEDIA_PLAYBACK)`, `DISABLE_KEYGUARD`. All are install-time, with no prompt |
-| Uninstalling deletes everything | All storage is app-private |
+| Notifications, exact alarms and full-screen alerts; declining means no alarms reach the phone | `POST_NOTIFICATIONS` (merged, from `expo-notifications`; asked at `ExpoNotificationSchedulerAdapter.ts:78`); `SCHEDULE_EXACT_ALARM`, `USE_EXACT_ALARM`, `USE_FULL_SCREEN_INTENT` (the app's modules); owner, 2026-10-06 |
+| Restarting alarms after reboot, staying awake, vibrating, playing sound ask for nothing | `RECEIVE_BOOT_COMPLETED`, `WAKE_LOCK`, `VIBRATE`, `FOREGROUND_SERVICE(_MEDIA_PLAYBACK)`, `DISABLE_KEYGUARD`, `MODIFY_AUDIO_SETTINGS`: install-time, no prompt |
+| Uninstalling deletes what's on the phone; a backup or an exported file can remain | All storage is app-private; the backup and export rows above |
 
-**Gap to watch:** the ads paragraph describes #389, which is not yet merged. The policy must not go
-live claiming ads the released app lacks, and the released app must not ship ads before the policy
-says so. Both reach users only at the first store release, and the release check in
-`docs/runbooks/privacy-policies.md` covers it.
+The merged manifest's other permissions, none of which prompts or sends anything the policy omits:
+
+| Permission | From | Prompts? | Covered by |
+| --- | --- | --- | --- |
+| `INTERNET`, `ACCESS_NETWORK_STATE`, `ACCESS_WIFI_STATE` | React Native, the ads SDK | No | The forecast, place search, purchases and ads rows |
+| `AD_ID`, `ACCESS_ADSERVICES_AD_ID`, `_ATTRIBUTION`, `_TOPICS` | The ads SDK | No | The ads row (advertising ID) |
+| `BIND_GET_INSTALL_REFERRER_SERVICE` | The ads SDK | No | The ads row |
+| `c2dm.permission.RECEIVE` | `expo-notifications` (push) | No | Inert: the app has no push service configured |
+| `READ_APP_BADGE` and the launcher badge permissions | `expo-notifications` | No | Badge counts on the launcher; nothing leaves the phone |
+| `SYSTEM_ALERT_WINDOW` | Expo's default main manifest | No: a special access only the person can turn on in Android's settings | Unused by the app. **Owner question:** remove it in an app ticket |
+| `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE` | Expo's default main manifest | Only on Android 12 and older, and the app never asks | Unused (Export data uses the system file picker). **Owner question:** remove with `SYSTEM_ALERT_WINDOW` |
+
+**Ads and the release:** the policy describes Meantime as it will be at its first store release, which
+includes ads (#417). No build of Meantime is on any store yet, so publishing this policy before #417
+merges describes no installed app wrongly. The release check in `docs/runbooks/privacy-policies.md`
+runs again before the first submission.
 
 ## Evidence plan
 
@@ -158,7 +175,7 @@ says so. Both reach users only at the first store release, and the release check
 | Risk | Blast radius | Mitigation |
 | --- | --- | --- |
 | The policy drifts from the app | A store rejection or a false statement | The factory rule in `deliver-app-issue` (PR #70) and the release check |
-| The ads text goes live before ads ship | A policy over-claims | Accepted: over-claiming is the safe direction; the first release is the reconciliation point |
+| The policy goes live before the ads PR merges | None while no build is on a store | The first-release check in `privacy-policies.md` (§ Ads and the release above) |
 | `check:a11y` needs Chrome | CI fails on a runner without it | `ubuntu-latest` ships Chrome; `CHROME_PATH` overrides |
 
 ## Out of scope
