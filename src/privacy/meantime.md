@@ -10,17 +10,17 @@ effective: 2026-10-06
 summary:
   - what: Your plans, alarms, logs and settings
     where: Stays on your phone
-    why: It is your planner
+    why: It's your planner
   - what: Approximate location, if you allow it
-    where: The Norwegian Meteorological Institute, rounded to about 11 metres
-    why: The forecast
+    where: The Norwegian Meteorological Institute, and Android's place search (Google, on most phones)
+    why: The forecast, and the name of the place
   - what: Places you search for
     where: Android's place search (Google, on most phones)
     why: Finding the place
   - what: Purchases
     where: Google Play
     why: Meantime Plus
-  - what: Ad data, as you choose
+  - what: Ad data
     where: Google AdMob
     why: Ads in the free version
 ---
@@ -35,14 +35,20 @@ policy.
 Everything you put into Meantime, your plans, alarms, logs, places and settings, is stored on your
 phone. 1n1 has no server and no account system, and never receives any of it.
 
-If you use Android's own backup, Android may include Meantime's data in your backup to your Google
-account, as it does for most apps. That backup is between you and Google.
+If you use Android's own backup, Android includes Meantime's data in your backup to your Google
+account, as it does for most apps, and can restore it if you install Meantime again. That backup is
+between you and Google.
+
+If you use Export data in Meantime's settings, the file it makes holds your Meantime data and goes
+wherever you choose to save or send it.
 
 ## What leaves your phone
 
-- **The forecast.** To show the weather, Meantime sends your approximate location, rounded to about
-  11 metres, to the Norwegian Meteorological Institute (MET Norway), which provides the forecast.
-  Nothing else about you is sent with it. MET Norway's
+- **The forecast.** To show the weather, Meantime sends the place's coordinates, to four decimal
+  places, to the Norwegian Meteorological Institute (MET Norway), which provides the forecast. That's
+  your approximate location, or a place you picked. Like any request over the internet, it also
+  carries your IP address. Meantime refreshes the forecast in the background about once an hour. No
+  account, name or other detail about you is sent. MET Norway's
   [privacy statement](https://www.met.no/en/About-us/privacy) covers what it does with requests.
 - **Place search.** When you search for a place, or Meantime names the place you are in, it uses
   Android's place search. On most phones Google provides it and receives the text or the location
@@ -51,8 +57,9 @@ account, as it does for most apps. That backup is between you and Google.
   learns whether Plus is active.
 - **Ads.** The free version shows ads from Google AdMob. Google receives what it needs to show an ad,
   such as your device's advertising ID, IP address and the ads you see and tap. Where the law requires
-  it, Google's form asks for your consent first, and ads are personalised only if you agree. Meantime
-  Plus removes ads. See [how Google uses data for ads](https://policies.google.com/technologies/ads)
+  it, Google's form asks for your consent before any ad is shown, and ads are personalised only if you
+  agree. You can change your answer at any time in Meantime's settings, under Privacy choices. Meantime Plus
+  removes ads. See [how Google uses data for ads](https://policies.google.com/technologies/ads)
   and [Google's privacy policy](https://policies.google.com/privacy).
 
 ## Permissions
@@ -70,8 +77,10 @@ Meantime isn't directed at children.
 
 ## Deleting your data
 
-Uninstalling Meantime deletes everything it stored. To start over without uninstalling, clear its
-storage in Android's settings for the app.
+Uninstalling Meantime deletes everything it stored on your phone. A copy can remain in two places
+you control: your Android backup in your Google account (manage it in Android's backup settings), and
+any file you made with Export data. To start over without uninstalling, clear Meantime's storage in
+Android's settings for the app.
 
 ## Changes
 
