@@ -128,6 +128,9 @@ function fakeBrowser(resultsFor, { ignoresTheme = false } = {}) {
         async setViewport({ width }) {
           log.push(['viewport', width]);
         },
+        async emulateMediaFeatures(features) {
+          log.push(['media', features.map((f) => `${f.name}=${f.value}`).join(',')]);
+        },
         async addScriptTag({ content }) {
           log.push(['axe', content.length]);
         },
@@ -183,6 +186,23 @@ describe('audit', () => {
       browser.log.filter((l) => l[0] === 'viewport').map((l) => l[1]),
       [390, 390, 1280, 1280],
     );
+  });
+
+  it('audits each page at rest, with motion reduced, so no block is caught mid-animation', async () => {
+    const browser = fakeBrowser(() => ({ violations: [] }));
+    await audit({
+      baseUrl: 'http://h',
+      paths: ['/'],
+      browser,
+      axeSource: 'axe',
+      viewports: [{ name: 'phone', width: 390, height: 844 }],
+    });
+    const order = browser.log.map((l) => l[0]);
+    assert.deepEqual(
+      browser.log.filter((l) => l[0] === 'media').map((l) => l[1]),
+      ['prefers-reduced-motion=reduce', 'prefers-reduced-motion=reduce'],
+    );
+    assert.ok(order.indexOf('media') < order.indexOf('goto'), 'set before the page loads');
   });
 
   it('reports a page that did not take the theme it was asked for', async () => {

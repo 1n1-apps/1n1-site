@@ -103,6 +103,8 @@ export async function audit({
       for (const theme of themes) {
         const page = await browser.newPage();
         await page.setViewport({ width: viewport.width, height: viewport.height });
+        // The page at rest: an entrance animation caught half-way reads as a contrast failure.
+        await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
         await page.goto(baseUrl + path);
         await page.evaluate((t) => localStorage.setItem('theme', t), theme);
         await page.reload();
