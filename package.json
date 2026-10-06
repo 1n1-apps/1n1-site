@@ -6,7 +6,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "node --test scripts/check-pr-body.test.mjs scripts/github.test.mjs \"tests/**/*.test.mjs\"",
-    "coverage": "node --test --experimental-test-coverage --test-coverage-include=scripts/check-links.mjs --test-coverage-include=scripts/check-a11y.mjs --test-coverage-include=src/assets/theme.js --test-coverage-include=eleventy.config.js --test-coverage-functions=100 \"tests/**/*.test.mjs\"",
+    "coverage": "node --test --experimental-test-coverage --test-coverage-include=scripts/check-links.mjs --test-coverage-include=scripts/check-a11y.mjs --test-coverage-include=src/assets/theme.js --test-coverage-include=src/assets/domino.js --test-coverage-include=src/assets/back.js --test-coverage-include=eleventy.config.js --test-coverage-functions=100 \"tests/**/*.test.mjs\"",
     "build": "eleventy",
     "preview": "eleventy --serve --port 8080",
     "lint": "eleventy --quiet && html-validate \"_site/**/*.html\"",
