@@ -5,16 +5,28 @@
   "scripts": {
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "node --test scripts/check-pr-body.test.mjs scripts/github.test.mjs",
+    "test": "node --test scripts/check-pr-body.test.mjs scripts/github.test.mjs \"tests/**/*.test.mjs\"",
+    "coverage": "node --test --experimental-test-coverage --test-coverage-include=scripts/check-links.mjs --test-coverage-include=scripts/check-a11y.mjs --test-coverage-include=src/assets/theme.js --test-coverage-include=src/assets/domino.js --test-coverage-include=src/assets/back.js --test-coverage-include=eleventy.config.js --test-coverage-functions=100 \"tests/**/*.test.mjs\"",
+    "build": "eleventy",
+    "preview": "eleventy --serve --port 8080",
+    "lint": "eleventy --quiet && html-validate \"_site/**/*.html\"",
+    "typecheck": "node node_modules/typescript/bin/tsc -p tsconfig.json",
+    "check:links": "node scripts/check-links.mjs _site https://1n1.uk",
+    "check:a11y": "node scripts/check-a11y.mjs _site",
     "deps:trust-check": "bun scripts/check-deps-trust.mjs",
     "prepare": "husky"
   },
   "devDependencies": {
+    "@11ty/eleventy": "3.1.6",
+    "axe-core": "4.14.0",
+    "html-validate": "11.16.2",
     "husky": "^9.1.7",
     "lint-staged": "^17.2.0",
-    "prettier": "^3.9.6"
+    "prettier": "^3.9.6",
+    "puppeteer-core": "25.12.0",
+    "typescript": "7.0.2"
   },
   "lint-staged": {
-    "*.{js,mjs,cjs,ts,json,yml,yaml,css,html,svg}": "prettier --write"
+    "*.{js,mjs,cjs,ts,json,yml,yaml,css,html}": "prettier --write"
   }
 }

@@ -20,19 +20,35 @@ pipeline is the factory's `deliver-app-issue`; this repository carries no skills
 | `docs/runbooks/` | Build and deploy, privacy policies, adding an app, taking brand exports. |
 | `docs/audits/` | Periodic whole-site delivery audits. |
 | `docs/evidence/` | Screenshots a ticket's plan names, per Issue. |
-| `scripts/` | Commit, ADR and PR-body checks, the GitHub wrapper, the Project status helper. |
-| `.github/` | Issue forms, the PR template, CI. |
+| `src/` | The site: layouts in `_includes/`, site data in `_data/`, one Markdown file per app (`apps/`) and per policy (`privacy/`), styles, scripts, fonts and images in `assets/`. |
+| `tests/` | Unit tests for the checks, the theme toggle and the build config. |
+| `scripts/` | `check-links` and `check-a11y`, the commit, ADR and PR-body checks, the GitHub wrapper, the Project status helper. |
+| `.github/` | Issue forms, the PR template, `ci.yml` (checks) and `deploy.yml` (publishes `main`). |
 
 ## Commands
 
 ```sh
 bun install
-bun run format:check
+bun run build        # the site, into _site/
+bun run preview      # http://localhost:8080
 bun run test
-bun scripts/check-adr-format.mjs
+bun run lint && bun run typecheck && bun run check:links && bun run check:a11y
 ```
 
-`build`, `preview`, `lint`, `typecheck`, `check:links` and `check:a11y` arrive with the site tooling
-([E2-A1](https://github.com/1n1-apps/1n1-studio/issues/6)); the site itself is
+## Adding an app
+
+Add its icon, `src/apps/<app>.md` and `src/privacy/<app>.md`, then build and check. No template
+changes. The steps are in [`docs/runbooks/adding-an-app.md`](docs/runbooks/adding-an-app.md).
+
+## Updating a privacy policy
+
+Whenever an app changes what it does with data, and before every store release, check the policy
+against the app's code and change `src/privacy/<app>.md` in the same delivery, with a new effective
+date. The steps are in [`docs/runbooks/privacy-policies.md`](docs/runbooks/privacy-policies.md).
+
+## Deploying
+
+The site is built with Eleventy and deployed to GitHub Pages on every push to `main`
+(`docs/runbooks/deploy.md`); it was delivered by
 [E2-F1](https://github.com/1n1-apps/1n1-studio/issues/7). Work is tracked on the
 [1n1 Studio Project](https://github.com/orgs/1n1-apps/projects/2).

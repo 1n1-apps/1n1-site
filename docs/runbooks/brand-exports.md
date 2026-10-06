@@ -5,14 +5,15 @@ here. Nothing is drawn or edited in this repository.
 
 ## What the site uses
 
-| Use | Export | Where it goes |
+| Use | From `1n1-studio` | Where it goes |
 | --- | --- | --- |
-| favicon | `favicon.ico`, `favicon-16.png`, `favicon-32.png`, `favicon.svg` | the site root |
-| touch icon | `apple-touch-icon.png` (180 px) | the site root |
-| header mark | `mark.svg` (the one-colour mark, inheriting `currentColor`) | the assets folder |
-| share card | `share-card.png` (1200 × 630) | the assets folder, referenced by every page's meta |
+| favicon | `brand/exports/favicon/favicon.ico` | `src/favicon.ico` |
+| favicon PNGs | `brand/exports/favicon/favicon-16.png`, `-32.png`, `-48.png` | `src/assets/brand/` |
+| touch icon | `brand/exports/favicon/apple-touch-icon-180.png` | `src/apple-touch-icon.png` |
+| share card | `brand/exports/site/share-card-1200x630.png` | `src/assets/brand/share-card.png` |
+| header mark | `brand/mark.svg`, the source (its colour tokens follow the theme) | `src/_includes/mark.svg`, inlined by the `mark` shortcode |
 
-The exact file names are set by E1-A1's generator manifest in `1n1-studio`; this table follows it.
+The names on the left are set by the generator manifest in `1n1-studio` (its ADR 0002).
 
 ## Copying an export in
 

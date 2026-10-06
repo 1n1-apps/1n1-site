@@ -1,0 +1,42 @@
+---
+layout: base.njk
+section: apps
+up: /apps/
+upLabel: Apps
+---
+<section class="apphero">
+<img class="appicon" src="{{ icon }}" alt="" width="88" height="88">
+<div>
+<h1>{{ name }}</h1>
+<p class="line">{{ line }}</p>
+{% if store %}<p class="cta"><a class="btn" href="{{ store }}">Get {{ name }} on Google Play</a></p>{% else %}<p class="cta"><span class="status">{{ status }}</span></p>{% endif %}
+</div>
+</section>
+{% if screenshots and screenshots.length %}<section aria-labelledby="shots">
+<h2 id="shots">Screenshots</h2>
+<ul class="shots">
+{% for shot in screenshots %}<li><img src="{{ shot.src }}" alt="{{ shot.alt }}" width="{{ shot.width or 1080 }}" height="{{ shot.height or 2400 }}" loading="lazy"></li>
+{% endfor %}</ul>
+</section>
+{% endif %}<section aria-labelledby="what">
+<h2 id="what">What it does</h2>
+<ul class="feat">
+{% for f in features %}<li class="card"><h3>{{ f.title }}</h3><p>{{ f.text }}</p></li>
+{% endfor %}</ul>
+</section>
+{% if plus %}<section class="plus" aria-labelledby="plus">
+<div class="plushead">
+<h2 id="plus">{{ plus.name }}</h2>
+<p class="terms">{{ plus.terms }}</p>
+</div>
+<ul class="unlocks">
+{% for u in plus.unlocks %}<li><h3>{{ u.title }}</h3><p>{{ u.text }}</p></li>
+{% endfor %}</ul>
+<p class="trial">{{ plus.trial }}{% if plus.thanks %} {{ plus.thanks }}{% endif %}</p>
+</section>
+{% endif %}<section aria-labelledby="details">
+<h2 id="details">Details</h2>
+<dl class="meta">
+{% for d in details %}<dt>{{ d.term }}</dt><dd>{{ d.text | safe }}</dd>
+{% endfor %}</dl>
+</section>

@@ -1,16 +1,39 @@
 # Runbook: adding an app to the site
 
-The steps an app's arrival needs, in order. The exact mechanics of the first four depend on the
-tooling E2-A1 chooses; E4-T1 (`1n1-studio` #12) completes this runbook once the site exists and
-decides whether it becomes a skill.
+An app arrives as two files and its icon. No template changes.
 
-1. **The app's content entry:** store name, one-line description, the longer description from the
-   approved copy in `1n1-studio/copy/`, the store link (or `coming soon` until the listing is live),
-   and the app's icon as the app repository exports it.
-2. **The app page** at `/apps/<codename>`, rendered from the entry by the app template.
-3. **The apps index** gains the app.
-4. **The privacy policy** at `/privacy/<codename>`, written by `privacy-policies.md`'s procedure.
-   It must be live before the app is submitted to a store.
-5. **Evidence:** screenshots of the new pages at both viewports in both schemes, and the browser
-   review the plan names.
-6. **After the store listing is live:** replace `coming soon` with the store link, in its own small PR.
+1. **The icon:** copy the app's store icon (512 px, as the app repository's generator exports it) to
+   `src/assets/apps/<app>/icon-512.png`. Note the app repository's commit in the commit subject.
+2. **The app page:** `src/apps/<app>.md`, front matter only, copied from `src/apps/meantime.md`:
+   - `name`, `slug`, `icon`, `line`, `summary`, and `order` for its place in the list;
+   - `status` (`Coming to Google Play` until the listing is live) and `store` (the listing URL, empty
+     until then);
+   - `features`: the app's real features, each a title and a sentence, taken from its in-app guide
+     and checked against its code. Not the bare minimum any app of its kind does;
+   - `plus`, for an app with a paid tier: `name`, `terms`, `trial`, `unlocks` (each a title and a
+     sentence, from the app's own Plus copy) and an optional `thanks`. Leave it out for a free app
+     and the section isn't drawn;
+   - `screenshots`: `[]` until release (below);
+   - `details`.
+
+   Words come from the approved copy in `1n1-studio/copy/`.
+3. **The privacy policy:** `src/privacy/<app>.md`, written by `privacy-policies.md`. It must be live
+   before the app is submitted to a store.
+4. **Build and check:** `bun run build`, `lint`, `check:links`, `check:a11y`. The home page and the
+   apps list pick the app up from its file.
+5. **Evidence:** screenshots of the new pages at a phone and a desktop width in both themes, and the
+   browser review the plan names.
+6. **At release** (the app's `store-listing.md` checklist sends you here), in one small PR, before
+   or on the day the listing goes live:
+   - `store`: the listing URL. The page then shows "Get <app> on Google Play" in place of `status`;
+   - `screenshots`: the phone screenshots from the store listing, in `src/assets/apps/<app>/`, each
+     `{ src, alt, width, height }` with an alt text that says what the screen shows. They appear as
+     a gallery under the app's heading;
+   - `features` and `plus`: checked against the released build, so a feature the release added or
+     changed is on the page and nothing on the page is missing from the app;
+   - the privacy policy: checked against the same build (`privacy-policies.md`).
+
+   Any new or changed words go through `1n1-studio/copy/` for approval first. Repeat at every release
+   that changes features, Plus, screenshots or the store listing.
+
+URLs use the app's store name, lowercased: `/apps/meantime/`, `/privacy/meantime/`.

@@ -40,3 +40,5 @@ below grouped so the log reads as a map, not a flat list.
 | ADR                                                     | Title                                   |
 | ------------------------------------------------------- | --------------------------------------- |
 | [0001](0001-record-architecture-decisions-with-adrs.md) | Record architecture decisions with ADRs |
+| [0002](0002-build-with-eleventy-and-deploy-from-actions.md) | Build the site with Eleventy and deploy it to GitHub Pages from Actions |
+| [0003](0003-two-halves-dark-first.md) | Lay the site out as two halves, dark first, with a theme toggle |

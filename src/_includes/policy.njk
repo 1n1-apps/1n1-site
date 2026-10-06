@@ -1,0 +1,24 @@
+---
+layout: base.njk
+section: privacy
+up: /privacy/
+upLabel: Privacy
+---
+<article class="policy">
+<h1>{{ app }} privacy policy</h1>
+<p class="updated">Effective <time datetime="{{ effective | isoDate }}">{{ effective | longDate }}</time></p>
+<section class="summary" aria-labelledby="in-short">
+<h2 id="in-short">In short</h2>
+<div class="tablewrap">
+<table>
+<thead><tr><th scope="col">What</th><th scope="col">Where it goes</th><th scope="col">Why</th></tr></thead>
+<tbody>
+{% for r in summary %}<tr><td>{{ r.what }}</td><td>{{ r.where }}</td><td>{{ r.why }}</td></tr>
+{% endfor %}</tbody>
+</table>
+</div>
+</section>
+<div class="prose">
+{{ content | safe }}
+</div>
+</article>

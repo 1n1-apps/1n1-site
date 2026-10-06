@@ -1,0 +1,424 @@
+<title>1n1 Website Directions</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,400;100,500;100,600;100,700;125,700;125,800&display=swap">
+<style>
+/* Layout: a sticky control bar (direction, page, scheme) over a stage that shows the same page at desktop width and phone width side by side. The board is deliberately one dark look; the mocks inside carry their own light and dark. */
+:root{
+  --deep:#042422; --raise:#0A3B38; --paper:#F2FAF8; --pink:#EC3A86;
+  --soft:rgba(242,250,248,.66); --line:rgba(242,250,248,.14);
+  --sans:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--deep);color:var(--paper);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--deep);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.bar .t{font-weight:800;font-stretch:125%;font-size:16px;margin-right:6px}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--line);background:transparent;border-radius:999px;padding:6px 12px;min-height:36px;cursor:pointer;color:var(--soft);font-weight:600;font-size:13px}
+.seg button:hover{color:var(--paper);border-color:var(--soft)}
+.seg button[aria-pressed="true"]{background:var(--paper);color:var(--deep);border-color:var(--paper)}
+.seg button .k{font-weight:800;margin-right:4px}
+
+.wrap{max-width:1600px;margin:0 auto;padding-inline:16px;padding-block:20px 80px;display:flex;flex-direction:column;gap:18px}
+.about{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px 32px;align-items:start}
+.about h1{margin:0 0 6px;font-size:clamp(24px,3vw,32px);font-weight:800;font-stretch:125%;letter-spacing:-.01em}
+.about .thesis{margin:0;font-size:16px;max-width:62ch}
+.facts{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 14px;font-size:14px}
+.facts dt{color:var(--soft);font-weight:600}
+.facts dd{margin:0}
+.pickrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.choose{border:0;border-radius:999px;background:var(--pink);color:#06302E;font-weight:800;padding:9px 18px;min-height:40px;cursor:pointer}
+.choose[aria-pressed="true"]{background:var(--paper)}
+.st{font-size:13px;color:var(--soft)}
+
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
+.cap{font-size:12px;color:var(--soft);margin:0 0 6px;font-weight:600}
+.frame{position:relative;width:100%;overflow:hidden;border-radius:10px;background:#000;box-shadow:0 0 0 1px var(--line)}
+.frame .url{height:26px;display:flex;align-items:center;gap:6px;padding:0 10px;background:#0b2f2c;font-size:11px;color:var(--soft)}
+.frame .url i{width:8px;height:8px;border-radius:50%;background:rgba(242,250,248,.25);display:inline-block}
+.frame .url span{margin-left:8px}
+.viewport{position:relative;overflow:hidden}
+.viewport>.site{position:absolute;top:0;left:0;transform-origin:0 0}
+.phone{border-radius:30px;padding:10px;background:#0b2f2c;box-shadow:0 0 0 1px var(--line)}
+.phone .viewport{border-radius:22px}
+.note{font-size:13px;color:var(--soft);margin:0}
+@media (max-width:1000px){.stage{grid-template-columns:minmax(0,1fr)}.about{grid-template-columns:minmax(0,1fr)}.phonecol{max-width:390px}}
+
+/* ============ The mock site: shared tokens, light and dark ============ */
+.site{
+  --g:#F2FAF8; --s:#E4F1EE; --i:#06302E; --m:#3D5D59; --l:#C4DAD5; --a:#EC3A86; --cut:var(--g); --pip:var(--a);
+  container-type:inline-size; width:var(--w,390px); min-height:var(--h,auto);
+  background:var(--g); color:var(--i); font-family:var(--sans); font-size:16px; line-height:1.55;
+}
+.site.dark{--g:#042422;--s:#0A3B38;--i:#F2FAF8;--m:#A7C4BF;--l:#1C4B47;--a:#EC3A86}
+.site *{box-sizing:border-box}
+.pg{min-height:100%}
+.site a{color:inherit;text-decoration:underline;text-decoration-color:var(--a);text-decoration-thickness:2px;text-underline-offset:3px}
+.site h1,.site h2,.site h3{margin:0;line-height:1.15;text-wrap:balance}
+.site p{margin:0}
+.site ul{margin:0;padding:0;list-style:none}
+.mk{display:block;flex:none;height:var(--mh,1em);width:calc(var(--mh,1em) * 60 / 92);color:var(--i)}
+.wm{font-weight:800;font-stretch:125%;letter-spacing:-.02em;line-height:1;white-space:nowrap}
+.wm i{font-style:normal;color:var(--a)}
+.brand{display:inline-flex;align-items:center;gap:.32em;text-decoration:none!important;font-size:22px}
+.brand .mk{--mh:1.12em}
+.appicon{display:block;flex:none;width:var(--iz,56px);height:var(--iz,56px);border-radius:22%;overflow:hidden}
+.appicon svg{display:block;width:100%;height:100%}
+.status{font-size:13px;font-weight:600;color:var(--m)}
+.btn{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:999px;background:var(--i);color:var(--g);font-weight:700;font-size:15px}
+.crumb{font-size:14px;color:var(--m)}
+.datatable{width:100%;border-collapse:collapse;font-size:15px}
+.datatable th,.datatable td{text-align:left;vertical-align:top;padding:10px 12px 10px 0;border-top:1px solid var(--l)}
+.datatable th{font-size:13px;color:var(--m);font-weight:600;border-top:0}
+.updated{font-size:14px;color:var(--m)}
+.site .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.site .meta{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 18px;font-size:15px}
+.site .meta dt{font-weight:700}
+.site .meta dd{margin:0}
+.site main.policy,.site main.apppage{display:flex;flex-direction:column;gap:22px}
+.site .summary{display:flex;flex-direction:column;gap:10px}
+.prose{display:flex;flex-direction:column;gap:12px;max-width:66ch}
+.prose h2{font-size:20px;font-weight:700;margin-top:14px}
+
+/* ============ A. Two halves ============ */
+.d-a{display:grid;grid-template-columns:minmax(0,1fr)}
+.d-a .half{background:var(--i);color:var(--g);--pip:var(--a);--cut:var(--i);padding:28px 20px 32px;display:flex;flex-direction:column;gap:22px}
+.d-a .half .mk{color:var(--g)}
+.d-a .half .brand{font-size:26px}
+.d-a .half .hl{font-size:30px;font-weight:800;font-stretch:125%;letter-spacing:-.015em;line-height:1.05}
+.d-a .half .nav{display:flex;gap:18px;font-weight:600}
+.d-a .half .nav a{text-decoration-color:var(--a)}
+.d-a .half .mail{font-size:14px;opacity:.85}
+.d-a .divide{height:6px;background:var(--g)}
+.d-a .half.inner{padding-block:18px 20px;gap:14px}
+.d-a .half.inner .hl,.d-a .half.inner .mail{display:none}
+.d-a .body{padding:28px 20px 40px;display:flex;flex-direction:column;gap:32px}
+.d-a .body h2{font-size:14px;font-weight:700;color:var(--m)}
+.d-a .app{display:flex;gap:16px;align-items:flex-start;padding:18px 0;border-top:2px solid var(--i)}
+.d-a .app h3{font-size:24px;font-weight:800;font-stretch:125%}
+.d-a .app .applinks{display:flex;gap:16px;margin-top:8px;font-size:15px}
+.d-a .apphero{display:flex;gap:18px;align-items:center}
+.d-a .apphero h1{font-size:38px;font-weight:800;font-stretch:125%}
+.d-a .feat{display:flex;flex-direction:column;gap:14px}
+.d-a .feat h3{font-size:17px;font-weight:700}
+.d-a .policy h1{font-size:30px;font-weight:800;font-stretch:125%}
+@container (min-width:760px){
+  .d-a{grid-template-columns:minmax(0,5fr) 8px minmax(0,7fr);min-height:900px}
+  .d-a .half{padding:56px 48px;justify-content:space-between;min-height:100%}
+  .d-a .half .top{display:flex;flex-direction:column;gap:56px}
+  .d-a .half .hl{font-size:52px}
+  .d-a .half.inner{padding:56px 48px}
+  .d-a .half.inner .hl{display:block;font-size:36px}
+  .d-a .half.inner .mail{display:block}
+  .d-a .divide{height:auto;width:8px}
+  .d-a .body{padding:64px 56px;gap:48px}
+  .d-a .apphero h1{font-size:56px}
+  .d-a .feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+}
+.site.dark .d-a .half{background:var(--i);color:var(--g)}
+
+/* ============ B. Tile run ============ */
+.d-b{background:var(--i);color:var(--g);--cut:var(--i)}
+.site.dark .d-b{background:var(--g);color:var(--i);--cut:var(--g)}
+.d-b .hd{display:flex;justify-content:space-between;align-items:center;padding:18px 20px}
+.d-b .hd .mk{color:currentColor}
+.d-b .hd .nav{display:flex;gap:16px;font-weight:600;font-size:15px}
+.d-b .intro{padding:24px 20px 8px;display:flex;flex-direction:column;gap:14px}
+.d-b .intro .lead{font-size:34px;font-weight:800;font-stretch:125%;letter-spacing:-.015em;line-height:1.04}
+.d-b .intro .bio{opacity:.88;max-width:52ch}
+.d-b .apps{padding:28px 20px}
+.d-b .apps h2{font-size:14px;font-weight:700;opacity:.7;margin-bottom:14px}
+.d-b .applist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.d-b .app{background:var(--g);color:var(--i);border-radius:22px;display:flex;flex-direction:column;align-items:center;text-align:center;padding:22px 14px 18px;gap:14px;aspect-ratio:1/1.62}
+.site.dark .d-b .app{background:var(--s);color:var(--i)}
+.d-b .app .tophalf{flex:1;display:grid;place-items:center}
+.d-b .app .cutline{height:3px;width:70%;background:var(--i);opacity:.18;border-radius:2px}
+.d-b .app h3{font-size:20px;font-weight:800;font-stretch:125%}
+.d-b .app .desc{font-size:13px;color:var(--m)}
+.d-b .app .applinks{display:flex;flex-direction:column;gap:4px;font-size:14px}
+.d-b .app.blank{background:transparent;border:2px dashed currentColor;opacity:.3}
+.d-b .contact{padding:28px 20px;border-top:1px solid rgba(127,160,155,.35)}
+.d-b .contact h2{font-size:14px;font-weight:700;opacity:.7;margin-bottom:6px}
+.d-b .contact p{font-size:22px;font-weight:700}
+.d-b .ft{padding:22px 20px 32px;font-size:13px;opacity:.75;display:flex;gap:16px;flex-wrap:wrap}
+.d-b main.apppage,.d-b main.policy{padding:12px 20px 40px;display:flex;flex-direction:column;gap:26px}
+.d-b .apphero{display:flex;flex-direction:column;gap:16px}
+.d-b .apphero h1{font-size:40px;font-weight:800;font-stretch:125%}
+.d-b .feat{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.d-b .feat li{background:var(--g);color:var(--i);border-radius:18px;padding:16px 18px}
+.site.dark .d-b .feat li{background:var(--s)}
+.d-b .feat h3{font-size:17px;font-weight:700}
+.d-b .btn{background:var(--a);color:#06302E}
+.d-b .policy h1{font-size:30px;font-weight:800;font-stretch:125%}
+.d-b .datatable th,.d-b .datatable td{border-color:rgba(127,160,155,.35)}
+.d-b .datatable th,.d-b .crumb,.d-b .updated,.d-b .status{color:inherit;opacity:.72}
+@container (min-width:760px){
+  .d-b .hd{padding:28px 56px}
+  .d-b .intro{padding:56px 56px 16px;max-width:1100px}
+  .d-b .intro .lead{font-size:76px}
+  .d-b .apps{padding:48px 56px}
+  .d-b .applist{grid-template-columns:repeat(4,minmax(0,220px))}
+  .d-b .contact,.d-b .ft{padding-inline:56px}
+  .d-b main.apppage,.d-b main.policy{padding:24px 56px 64px}
+  .d-b .apphero{flex-direction:row;align-items:center;gap:28px}
+  .d-b .apphero h1{font-size:64px}
+  .d-b .feat{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .d-b .policy .prose,.d-b .policy .summary{max-width:760px}
+}
+
+/* ============ C. Data label ============ */
+.d-c{--rule:var(--i)}
+.d-c .shell{padding:16px;display:flex;flex-direction:column;gap:18px}
+.d-c .hd{display:flex;justify-content:space-between;align-items:center;border-bottom:8px solid var(--rule);padding-bottom:12px}
+.d-c .hd .nav{display:flex;gap:14px;font-weight:600;font-size:15px}
+.d-c .label{border:3px solid var(--rule);padding:14px 16px;display:flex;flex-direction:column}
+.d-c .label > h2,.d-c .label > h1{font-size:30px;font-weight:800;font-stretch:125%;letter-spacing:-.01em;border-bottom:1px solid var(--rule);padding-bottom:8px}
+.d-c .label .row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--rule);padding:8px 0}
+.d-c .label .row.thick{border-bottom-width:8px}
+.d-c .label .row.mid{border-bottom-width:4px}
+.d-c .label .row b{font-weight:800}
+.d-c .intro .lead{font-size:28px;font-weight:800;font-stretch:125%;line-height:1.08;padding:10px 0;border-bottom:8px solid var(--rule)}
+.d-c .intro .bio{padding-top:10px}
+.d-c .app{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:4px solid var(--rule)}
+.d-c .app h3{font-size:22px;font-weight:800;font-stretch:125%}
+.d-c .app .applinks{display:flex;gap:14px;margin-top:6px;font-size:15px}
+.d-c .datatable th,.d-c .datatable td{border-top:1px solid var(--rule)}
+.d-c .datatable thead th{border-bottom:4px solid var(--rule);color:var(--i);font-weight:800}
+.d-c .datatable td:first-child{font-weight:700}
+.d-c .ft{font-size:13px;border-top:8px solid var(--rule);padding-top:10px;display:flex;flex-wrap:wrap;gap:14px}
+.d-c .apphero{display:flex;gap:16px;align-items:center;padding:6px 0 12px;border-bottom:8px solid var(--rule)}
+.d-c .apphero h1{font-size:36px;font-weight:800;font-stretch:125%}
+.d-c .feat li{padding:10px 0;border-bottom:1px solid var(--rule)}
+.d-c .feat h3{font-size:17px;font-weight:800}
+@container (min-width:760px){
+  .d-c .shell{padding:40px 56px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+  .d-c .hd,.d-c .ft{grid-column:1/-1}
+  .d-c .intro .lead{font-size:46px}
+  .d-c .policy{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:40px;align-items:start}
+  .d-c .apppage{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
+}
+
+/* ============ D. Big type ============ */
+.d-d .mast{padding:18px 16px 0}
+.d-d .giant{font-size:24.5cqw;line-height:.82;display:block;letter-spacing:-.04em}
+.d-d .giant i{font-style:normal;color:var(--a)}
+.d-d .navrow{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--l);font-weight:600}
+.d-d .navrow .nav{display:flex;gap:16px}
+.d-d .navrow .mk{--mh:28px}
+.d-d .col{padding:28px 16px 48px;display:flex;flex-direction:column;gap:30px;max-width:720px}
+.d-d .lead{font-size:26px;font-weight:700;line-height:1.2}
+.d-d h2{font-size:14px;font-weight:700;color:var(--m)}
+.d-d .app{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:start}
+.d-d .app h3{font-size:22px;font-weight:800;font-stretch:125%}
+.d-d .app .applinks{display:flex;gap:16px;margin-top:6px;font-size:15px}
+.d-d .app .status{grid-column:2}
+.d-d .ft{padding:22px 16px 30px;border-top:1px solid var(--l);font-size:13px;color:var(--m);display:flex;gap:16px;flex-wrap:wrap}
+.d-d .mast.small .giant{font-size:12cqw}
+.d-d .apphero{display:flex;gap:16px;align-items:center}
+.d-d .apphero h1{font-size:36px;font-weight:800;font-stretch:125%}
+.d-d .feat{display:flex;flex-direction:column;gap:14px}
+.d-d .feat h3{font-size:17px;font-weight:700}
+.d-d .policy h1{font-size:30px;font-weight:800;font-stretch:125%}
+@container (min-width:760px){
+  .d-d .mast{padding:40px 48px 0}
+  .d-d .giant{font-size:23.5cqw}
+  .d-d .mast.small .giant{font-size:9cqw}
+  .d-d .navrow{padding:18px 48px}
+  .d-d .col{padding:56px 48px 80px;margin-left:calc(23.5cqw * .62);gap:44px}
+  .d-d .lead{font-size:36px}
+  .d-d .ft{padding:26px 48px 40px}
+  .d-d .apphero h1{font-size:56px}
+}
+
+/* ============ E. The usual ============ */
+.d-e .hd{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--l)}
+.d-e .hd .nav{display:flex;gap:18px;font-weight:500;font-size:15px}
+.d-e .hd .nav a{text-decoration:none}
+.d-e .intro{padding:48px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;background:var(--s)}
+.d-e .intro .lead{font-size:30px;font-weight:700;line-height:1.15}
+.d-e .intro .bio{color:var(--m);max-width:52ch}
+.d-e .apps,.d-e .contact{padding:40px 20px;max-width:1040px;margin:0 auto}
+.d-e .apps h2,.d-e .contact h2{font-size:24px;font-weight:700;margin-bottom:16px}
+.d-e .applist{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.d-e .app{border:1px solid var(--l);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;background:var(--g)}
+.d-e .app h3{font-size:20px;font-weight:700}
+.d-e .app .applinks{display:flex;gap:16px;font-size:15px}
+.d-e .ft{padding:24px 20px;border-top:1px solid var(--l);font-size:13px;color:var(--m);display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.d-e main.apppage,.d-e main.policy{padding:32px 20px 48px;max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+.d-e .apphero{display:flex;gap:16px;align-items:center}
+.d-e .apphero h1{font-size:34px;font-weight:700}
+.d-e .feat{display:grid;gap:14px}
+.d-e .feat li{border:1px solid var(--l);border-radius:14px;padding:16px}
+.d-e .feat h3{font-size:17px;font-weight:700}
+.d-e .policy h1{font-size:30px;font-weight:700}
+@container (min-width:760px){
+  .d-e .hd{padding:18px 48px}
+  .d-e .intro{padding:96px 48px}
+  .d-e .intro .lead{font-size:48px}
+  .d-e .applist{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .d-e .feat{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="dom" viewBox="20 4 60 92"><rect x="22" y="6" width="56" height="88" rx="14" fill="currentColor"/><path d="M30 50h40" fill="none" stroke-width="4" style="stroke:var(--cut)"/><circle cx="50" cy="28" r="8" style="fill:var(--pip)"/><circle cx="50" cy="72" r="8" style="fill:var(--pip)"/></symbol>
+  <symbol id="mt" viewBox="18 18 72 72"><rect x="0" y="0" width="108" height="108" fill="#287F95"/><rect x="32" y="30" width="44" height="8" rx="4" fill="#CF6A30"/><rect x="48" y="41" width="28" height="8" rx="4" fill="#7AB0BD"/><rect x="32" y="42" width="12" height="34" rx="6" fill="#FFFFFF"/><rect x="48" y="53" width="12" height="11" rx="6" fill="#FFFFFF"/><rect x="64" y="53" width="12" height="23" rx="6" fill="#FFFFFF"/></symbol>
+</defs></svg>
+
+<div class="bar" role="toolbar" aria-label="Board controls">
+  <span class="t">1n1 website</span>
+  <div class="seg" id="dirs" role="group" aria-label="Direction"></div>
+  <div class="seg" id="pages" role="group" aria-label="Page"></div>
+  <div class="seg" id="schemes" role="group" aria-label="Colour scheme"></div>
+</div>
+
+<main class="wrap">
+  <section class="about" aria-live="polite">
+    <div>
+      <h1 id="dname"></h1>
+      <p class="thesis" id="dthesis"></p>
+      <div class="pickrow"><button type="button" class="choose" id="choose" aria-pressed="false">Choose this direction</button><span class="st" id="st"></span></div>
+    </div>
+    <dl class="facts" id="dfacts"></dl>
+  </section>
+  <section class="stage">
+    <div>
+      <p class="cap">Desktop, 1280 px wide, scaled to fit</p>
+      <div class="frame"><div class="url"><i></i><i></i><i></i><span id="url1">1n1.uk</span></div><div class="viewport" id="vpDesk"></div></div>
+    </div>
+    <div class="phonecol">
+      <p class="cap">Phone, 390 px wide</p>
+      <div class="phone"><div class="viewport" id="vpPhone"></div></div>
+    </div>
+  </section>
+  <p class="note">Every frame is the same page markup; the layout changes with the frame's width, as it will on the real site. Page copy for Meantime and its privacy policy is a draft for the board; the final words and the policy's facts are checked against the app's code in the build.</p>
+</main>
+
+<script>
+(function(){
+var DIRS=[
+ {id:'a',name:'Two halves',thesis:'The page is the domino: an ink half holds the name, the line and the way around; a paper half holds the content; the domino’s divider runs between them. In dark the halves trade places.',
+  facts:[['Signature','The split, with the divider as a real 8 px cut'],['Phone','The ink half becomes the top block, the divider a horizontal cut'],['Colour','Committed: ink owns a third to half of every screen'],['Risk','On long pages the ink half is empty below the fold on desktop']]},
+ {id:'b',name:'Tile run',thesis:'Every app is a tile in the shape of the mark, set in a run like dominoes on a table. The ground is ink in light and paper in dark, so the tiles always stand out from it.',
+  facts:[['Signature','App tiles at the domino’s 1:1.6 proportion, with the cut line'],['Phone','Tiles two across; the run wraps as apps are added'],['Colour','Drenched: the ground is the brand ink'],['Risk','One app makes a short run until the second ships']]},
+ {id:'c',name:'Data label',thesis:'Set like the label on a box of food: heavy rules, plain rows, what is in it and where it goes. The privacy summary is the page’s signature, and every page takes the same rules.',
+  facts:[['Signature','The privacy summary as a label anyone can read in ten seconds'],['Phone','Labels stack full width; rules stay heavy'],['Colour','Restrained: ink on paper, the pink only in the mark and links'],['Risk','The heaviest look on a large screen; it needs real content to hold']]},
+ {id:'d',name:'Big type',thesis:'The wordmark at the full width of the page, its two dots as large pink squares, then one quiet column of text. The name does the work; everything else stays small.',
+  facts:[['Signature','1·n·1 sized to the viewport, on every page'],['Phone','The wordmark still fills the width; the column follows'],['Colour','Restrained, with two loud squares'],['Risk','Inner pages shrink the masthead so it does not push the answer down']]},
+ {id:'e',name:'The usual',thesis:'A studio site as most studios ship it: a top bar, a centred line, cards for the apps, a footer. Here played straight, for comparison and in case the familiar is what you want.',
+  facts:[['Signature','None, by design'],['Phone','Cards stack; the bar keeps its links'],['Colour','Restrained'],['Risk','Could belong to any studio']]}];
+var PAGES=[['home','Home'],['app','Meantime'],['privacy','Privacy']];
+var st={d:'a',p:'home',s:'light'};
+var URLS={home:'1n1.uk',app:'1n1.uk/apps/meantime',privacy:'1n1.uk/privacy/meantime'};
+
+var MARK='<svg class="mk" aria-hidden="true"><use href="#dom"/></svg>';
+var WM='<span class="wm">1<i>·</i>n<i>·</i>1</span>';
+var BRAND='<a class="brand" href="#" aria-label="1n1 home">'+MARK+WM+'</a>';
+var NAV='<nav class="nav" aria-label="Site"><a href="#">Apps</a><a href="#">Contact</a></nav>';
+var MT='<span class="appicon"><svg viewBox="0 0 72 72" aria-hidden="true"><use href="#mt" width="72" height="72"/></svg></span>';
+var LEAD='Pocket-sized software made for humans.';
+var BIO='1n1 creates independent Android apps. Built for the home screen, not the app drawer. Support at <a href="#">contact@1n1.uk</a>.';
+var FOOT='<footer class="ft"><span>© 2026 1n1</span><a href="#">Privacy policies</a><a href="#">contact@1n1.uk</a></footer>';
+var APPLINE='A day planner for Android: plans, alarms and the forecast on one screen.';
+var APP='<li class="app">'+MT+'<div class="appbody"><h3>Meantime</h3><p class="desc">'+APPLINE+'</p><p class="applinks"><a href="#">About Meantime</a><a href="#">Privacy policy</a></p><p class="status">Coming to Google Play</p></div></li>';
+var FEATS='<ul class="feat"><li><h3>Plans</h3><p>Your day as a timeline, with repeats and all-day plans.</p></li><li><h3>Alarms</h3><p>Alarms that ring at the time you set, even when the phone is asleep.</p></li><li><h3>Weather</h3><p>The forecast for where you are, from MET Norway.</p></li></ul>';
+var META='<dl class="meta facts2"><dt>Price</dt><dd>Free, with ads. Meantime Plus removes them.</dd><dt>Your data</dt><dd>Stays on your phone, except what the <a href="#">privacy policy</a> lists.</dd><dt>Support</dt><dd><a href="#">contact@1n1.uk</a></dd></dl>';
+var ROWS=[['Your plans, alarms and logs','Stays on your phone','It is your planner'],['Approximate location','MET Norway, rounded to about 11 m','The forecast'],['Places you search for','Android’s place search (Google)','Finding the place'],['Purchases','Google Play','Meantime Plus'],['Ad data, if you agree','Google AdMob','Ads in the free version']];
+var TABLE='<table class="datatable"><thead><tr><th scope="col">What</th><th scope="col">Where it goes</th><th scope="col">Why</th></tr></thead><tbody>'+ROWS.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td></tr>'}).join('')+'</tbody></table>';
+var PROSE='<div class="prose"><h2>What Meantime keeps</h2><p>Everything you put into Meantime, plans, alarms, logs and settings, is stored on your phone. 1n1 has no server and no account, and never sees it.</p><h2>What leaves your phone</h2><p>To show the weather, Meantime sends your approximate location, rounded to about 11 metres, to the Norwegian Meteorological Institute. Searching for a place uses Android’s place search. Purchases go through Google Play. The free version shows ads from Google AdMob, which asks for your consent first where the law requires it.</p><h2>Your choices</h2><p>You can turn off location and enter a place by hand, change your ad choices in Settings, and delete everything by uninstalling the app.</p><h2>Contact</h2><p>Questions about this policy: <a href="#">contact@1n1.uk</a>.</p></div>';
+var CRUMB={app:'<p class="crumb"><a href="#">Apps</a> / Meantime</p>',privacy:'<p class="crumb"><a href="#">Privacy</a> / Meantime</p>'};
+
+function page(d,p){
+  var home=p==='home',app=p==='app',pol=p==='privacy';
+  var mainHome='<main class="home"><section class="intro"><h1 class="lead">'+LEAD+'</h1><p class="bio">'+BIO+'</p></section><section class="apps"><h2>Apps</h2><ul class="applist">'+APP+'</ul></section><section class="contact"><h2>Contact</h2><p><a href="#">contact@1n1.uk</a></p></section></main>';
+  var mainApp='<main class="apppage">'+CRUMB.app+'<section class="apphero">'+MT.replace('appicon','appicon" style="--iz:88px')+'<div><h1>Meantime</h1><p>A day planner for Android.</p><p style="margin-top:12px"><span class="btn">Coming to Google Play</span></p></div></section><section><h2 class="sr">What it does</h2>'+FEATS+'</section><section>'+META+'</section></main>';
+  var mainPol='<main class="policy">'+CRUMB.privacy+'<h1>Meantime privacy policy</h1><p class="updated">Last updated 6 October 2026</p><section class="summary"><h2>In short</h2>'+TABLE+'</section>'+PROSE+'</main>';
+  if(d==='a'){
+    var half='<div class="half'+(home?'':' inner')+'"><div class="top">'+BRAND+(home?'<h1 class="hl">'+LEAD+'</h1>':'<p class="hl">'+LEAD+'</p>')+NAV+'</div><p class="mail">contact@1n1.uk</p></div><div class="divide"></div>';
+    var bodyHome='<div class="body"><p class="bio">'+BIO+'</p><section class="apps"><h2>Apps</h2><ul class="applist">'+APP+'</ul></section></div>';
+    return half+(home?bodyHome:'<div class="body">'+(app?mainApp:mainPol)+'</div>');
+  }
+  if(d==='b'){
+    var tile='<li class="app"><div class="tophalf">'+MT.replace('appicon','appicon" style="--iz:72px')+'</div><div class="cutline"></div><h3>Meantime</h3><p class="desc">A day planner</p><p class="applinks"><a href="#">About</a><a href="#">Privacy</a></p></li>';
+    var hd='<header class="hd">'+BRAND+NAV+'</header>';
+    if(home)return hd+'<main><section class="intro"><h1 class="lead">'+LEAD+'</h1><p class="bio">'+BIO+'</p></section><section class="apps"><h2>Apps</h2><ul class="applist">'+tile+'</ul></section><section class="contact"><h2>Contact</h2><p><a href="#">contact@1n1.uk</a></p></section></main>'+FOOT;
+    return hd+(app?mainApp:mainPol)+FOOT;
+  }
+  if(d==='c'){
+    var hdc='<header class="hd">'+BRAND+NAV+'</header>';
+    if(home)return '<div class="shell">'+hdc+'<section class="label intro"><h1 class="lead">'+LEAD+'</h1><p class="bio">'+BIO+'</p></section><section class="label apps"><h2>Apps</h2><div class="row thick"><b>Name</b><b>Status</b></div><ul class="applist">'+APP+'</ul><div class="row"><span>Contact</span><a href="#">contact@1n1.uk</a></div></section>'+FOOT+'</div>';
+    if(app)return '<div class="shell">'+hdc+'<main class="apppage"><div>'+CRUMB.app+'<section class="apphero">'+MT.replace('appicon','appicon" style="--iz:76px')+'<div><h1>Meantime</h1><p>A day planner for Android.</p></div></section>'+FEATS+'<p style="margin-top:14px"><span class="btn">Coming to Google Play</span></p></div><section class="label"><h2>At a glance</h2><div class="row mid"><b>Price</b><span>Free, with ads</span></div><div class="row"><span>Meantime Plus</span><span>No ads</span></div><div class="row mid"><b>Your data</b><span>On your phone</span></div><div class="row"><span>Leaves it</span><a href="#">See the policy</a></div><div class="row"><b>Support</b><a href="#">contact@1n1.uk</a></div></section></main>'+FOOT+'</div>';
+    return '<div class="shell">'+hdc+'<main class="policy"><section class="label summary">'+CRUMB.privacy+'<h1>Meantime privacy</h1><p class="updated" style="padding:6px 0">Last updated 6 October 2026</p>'+TABLE+'</section>'+PROSE+'</main>'+FOOT+'</div>';
+  }
+  if(d==='d'){
+    var mast='<header class="mast'+(home?'':' small')+'"><a href="#" style="text-decoration:none" aria-label="1n1 home"><span class="wm giant">1<i>·</i>n<i>·</i>1</span></a></header><div class="navrow">'+MARK+NAV+'</div>';
+    if(home)return mast+'<main class="col"><h1 class="lead">'+LEAD+'</h1><p class="bio">'+BIO+'</p><section class="apps"><h2>Apps</h2><ul class="applist" style="margin-top:12px">'+APP+'</ul></section></main>'+FOOT;
+    return mast+'<div class="col">'+(app?mainApp:mainPol)+'</div>'+FOOT;
+  }
+  var hde='<header class="hd">'+BRAND+'<nav class="nav" aria-label="Site"><a href="#">Apps</a><a href="#">Contact</a><a href="#">Privacy</a></nav></header>';
+  if(home)return hde+'<main><section class="intro">'+MARK.replace('class="mk"','class="mk" style="--mh:64px"')+'<h1 class="lead">'+LEAD+'</h1><p class="bio">'+BIO+'</p></section><section class="apps"><h2>Apps</h2><ul class="applist">'+APP+'</ul></section><section class="contact"><h2>Contact</h2><p><a href="#">contact@1n1.uk</a></p></section></main>'+FOOT;
+  return hde+(app?mainApp:mainPol)+FOOT;
+}
+
+function $(s){return document.querySelector(s)}
+function renderSite(vp,w){
+  vp.innerHTML='<div class="site'+(st.s==='dark'?' dark':'')+'" style="--w:'+w+'px"><div class="pg d-'+st.d+'">'+page(st.d,st.p)+'</div></div>';
+  fit(vp);
+}
+function fit(vp){
+  var site=vp.firstChild;if(!site)return;
+  var w=parseFloat(site.style.getPropertyValue('--w'));
+  var k=Math.min(1,vp.clientWidth/w);
+  site.style.transform='scale('+k+')';
+  vp.style.height=Math.ceil(site.offsetHeight*k)+'px';
+}
+function render(){
+  var d=DIRS.filter(function(x){return x.id===st.d})[0];
+  $('#dname').textContent=d.id.toUpperCase()+'. '+d.name;
+  $('#dthesis').textContent=d.thesis;
+  $('#dfacts').innerHTML=d.facts.map(function(f){return '<dt>'+f[0]+'</dt><dd>'+f[1]+'</dd>'}).join('');
+  $('#url1').textContent=URLS[st.p];
+  renderSite($('#vpDesk'),1280);renderSite($('#vpPhone'),390);
+  [['#dirs','d'],['#pages','p'],['#schemes','s']].forEach(function(g){
+    document.querySelectorAll(g[0]+' button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.v===st[g[1]]))});
+  });
+  $('#choose').setAttribute('aria-pressed',String(chosen===st.d));
+  $('#choose').textContent=chosen===st.d?'Your choice':'Choose this direction';
+  try{history.replaceState(null,'','#'+st.d+'-'+st.p+'-'+st.s)}catch(e){}
+}
+$('#dirs').innerHTML=DIRS.map(function(d){return '<button type="button" data-v="'+d.id+'"><span class="k">'+d.id.toUpperCase()+'</span>'+d.name+'</button>'}).join('');
+$('#pages').innerHTML=PAGES.map(function(p){return '<button type="button" data-v="'+p[0]+'">'+p[1]+'</button>'}).join('');
+$('#schemes').innerHTML='<button type="button" data-v="light">Light</button><button type="button" data-v="dark">Dark</button>';
+[['#dirs','d'],['#pages','p'],['#schemes','s']].forEach(function(g){
+  $(g[0]).addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;st[g[1]]=b.dataset.v;render()});
+});
+var m=(location.hash||'').match(/^#([a-e])(?:-(home|app|privacy))?(?:-(light|dark))?$/);
+if(m){st.d=m[1];if(m[2])st.p=m[2];if(m[3])st.s=m[3]}
+else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)st.s='dark';
+
+// The owner's choice is saved as choice/site so it can be read back.
+var chosen=null,db=null,busy=false;
+function status(t){$('#st').textContent=t}
+$('#choose').addEventListener('click',function(){
+  chosen=st.d;render();
+  if(!db){status('Saved on this page only; open it on claude.ai while signed in to save the choice.');return}
+  if(busy)return;busy=true;status('Saving…');
+  db.doc('choice/site').set({direction:st.d,name:DIRS.filter(function(x){return x.id===st.d})[0].name,at:new Date().toISOString()})
+    .then(function(){status('Saved')},function(){status('That didn’t save. Try again.')}).then(function(){busy=false});
+});
+function initDb(){
+  if(!(window.claude&&window.claude.use))return;
+  window.claude.use('db').then(function(d){db=d;if(!db)return;
+    db.doc('choice/site').get().then(function(s){if(s.exists){chosen=(s.data()||{}).direction||null;render();status('Your saved choice is marked.')}},function(){});
+  },function(){});
+}
+if(window.claude)initDb();else window.addEventListener('load',initDb);
+
+render();
+var ro=new ResizeObserver(function(){fit($('#vpDesk'));fit($('#vpPhone'))});
+ro.observe($('#vpDesk'));ro.observe($('#vpPhone'));
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){fit($('#vpDesk'));fit($('#vpPhone'))});
+})();
+</script>

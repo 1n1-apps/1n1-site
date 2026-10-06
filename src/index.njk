@@ -1,0 +1,20 @@
+---
+layout: base.njk
+home: true
+description: Pocket-sized software made for humans. Independent Android apps from 1n1.
+---
+<p class="bio">{{ site.bio }} Support at <a href="mailto:{{ site.email }}">{{ site.email }}</a>.</p>
+<section aria-labelledby="apps-h">
+<h2 id="apps-h">Apps</h2>
+<ul class="applist">
+{% for app in collections.apps %}<li class="app">
+<img class="appicon" src="{{ app.data.icon }}" alt="" width="56" height="56">
+<div>
+<h3><a href="{{ app.url }}">{{ app.data.name }}</a></h3>
+<p>{{ app.data.summary }}</p>
+<p class="applinks"><a href="/privacy/{{ app.data.slug }}/">Privacy policy</a></p>
+<p class="status">{{ app.data.status }}</p>
+</div>
+</li>
+{% endfor %}</ul>
+</section>

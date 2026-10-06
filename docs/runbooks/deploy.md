@@ -1,24 +1,32 @@
 # Runbook: build and deploy
 
-The site is served by GitHub Pages from this repository, on the studio's domain over HTTPS. **The
-tooling, build and deploy mechanism are decided by E2-A1** (`1n1-studio` #6) and recorded in its ADR;
-until that merges, nothing deploys and this runbook names only what is fixed.
+The site is plain HTML and CSS built by Eleventy and served by GitHub Pages from this repository, on
+`1n1.uk` over HTTPS (ADR 0002).
 
-## Fixed by the brief
+## Building and previewing
 
-- Host: GitHub Pages, from `1n1-apps/1n1-site`, which is public for that reason.
-- Domain: the custom domain E2-T1 registers, verified for Pages on the organization so no other
-  repository can claim it, with HTTPS enforced.
-- Source: `main`. A merge to `main` is a deploy; nothing deploys from a branch.
-- Build: `bun run build` produces the whole site into the output folder `.gitignore` names; the
-  output is never committed.
+```sh
+bun install
+bun run build        # writes the whole site to _site/ (never committed)
+bun run preview      # serves it at http://localhost:8080 with live reload, for a browser review
+```
 
-## To be filled by E2-A1
+Before a pull request, run the checks CI runs: `bun run typecheck`, `test`, `coverage`, `lint`,
+`check:links` and `check:a11y`. `check:a11y` needs Chrome; set `CHROME_PATH` if it is not in the usual
+place.
 
-- The static tooling (plain HTML and CSS, or a generator) and why.
-- The exact `build`, `preview`, `lint`, `typecheck`, `check:links` and `check:a11y` scripts, which
-  `AGENTS.md` already names as the contract.
-- The Pages workflow (`.github/workflows/deploy.yml`): build on push to `main`, upload the output,
-  deploy with the Pages action, pinned by SHA like `ci.yml`.
-- How to run a local preview for `review-site-in-browser`.
-- How to roll back: revert the merge on `main`; the next deploy serves the previous output.
+## Deploying
+
+- `.github/workflows/deploy.yml` builds and publishes `_site` on every push to `main`. A merge to
+  `main` is a deploy; nothing deploys from a branch. Its actions are pinned by SHA like `ci.yml`.
+- The repository's Settings → Pages: source **GitHub Actions**, custom domain `1n1.uk`, **Enforce
+  HTTPS** on. `1n1.uk` is verified for Pages on the organization, so no other repository can claim
+  it. `1n1-studio/records/github-pages.md` records each setting and the DNS records.
+- A deploy shows in the repository's Actions tab and as the `github-pages` environment.
+- The workflow can also be run by hand (`workflow_dispatch`), and it runs no checks of its own: what
+  stops a branch from deploying is the `github-pages` environment's deployment-branch rule, which
+  allows `main` only. Keep that rule when changing the environment.
+
+## Rolling back
+
+Revert the merge on `main`. The revert's push deploys the previous output.

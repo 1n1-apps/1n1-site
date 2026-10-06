@@ -75,7 +75,9 @@ This contract selects the procedure; it does not replace the skill.
   this repository. The wrapper reads only the factory-issued, ignored, expiring `.env.agent.local`
   token. If it is absent or expired, reissue it from `factory-control`
   (`bun scripts/issue-app-agent-token.mjs 1n1-site <issue-number>`) and replace only the ignored
-  worktree copy; never configure GitHub credentials directly.
+  worktree copy; never configure GitHub credentials directly. One exception: a privacy-policy PR that
+  an app ticket drives has no studio Issue to issue a token for, so it is opened with the owner's own
+  `gh` login (`docs/runbooks/privacy-policies.md` § Changing a policy).
 
 ## Content rules
 
@@ -155,9 +157,9 @@ bun scripts/check-adr-format.mjs
 bun scripts/check-pr-body.mjs .pr-body.md
 ```
 
-`build`, `preview`, `lint`, `typecheck`, `check:links` and `check:a11y` are the contract E2-A1
-(`1n1-studio` Issue #6) delivers with the site tooling; until then they are absent and the hooks and
-CI do not call them. `format:check` and `test` work from the first commit.
+`bun run coverage` holds the site's own code (`scripts/check-*.mjs`, `src/assets/*.js`,
+`eleventy.config.js`) to 100 percent of functions. CI runs every command above; `check:a11y` needs a
+Chrome (`CHROME_PATH` if it is not in the usual place). ADR 0002 records the tooling.
 
 Run every long command with a log and a time-box, so a hung process is visible and recoverable. At
 the time-box, inspect the log and the process rather than waiting longer.
@@ -179,6 +181,11 @@ the time-box, inspect the log and the process rather than waiting longer.
   never in the primary checkout. A junction may exist at `1n1-apps\.worktrees\1n1-site-<issue>` so
   the owner can open mid-ticket documents; it is for reading, never for running commands.
 - Branch `feature/<issue>-<slug>` from current `origin/main`. Pull requests target `main`.
+- `main` is protected by a ruleset: a pull request with the owner's approval, the CI job `verify`
+  passing, no direct push or force push. A required check is matched by its job name, so a change
+  that renames, adds or removes a CI job says so in its PR description: the owner updates the
+  ruleset when merging it, or every later PR waits on a check that never reports
+  (`factory-control/docs/runbooks/github-org-and-tokens.md` § Protect `main`).
 - Commit subjects are exactly `type: summary` — one of `feat`, `fix`, `docs`, `style`, `refactor`,
   `perf`, `test`, `build`, `ci`, `chore`, `revert`. Never add a scope. `commit` has the full rules.
 - Make many small commits: each one logical change, independently reviewable, green.
