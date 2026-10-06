@@ -105,12 +105,19 @@ function fakeBrowser(resultsFor) {
           url = u;
           log.push(['goto', u]);
         },
+        // Runs the page-side function for real, against stand-ins for the page's globals.
         async evaluate(fn, arg) {
-          if (arg !== undefined) {
-            log.push(['theme', arg]);
-            return undefined;
+          const theme = () => log.filter((l) => l[0] === 'theme').at(-1)?.[1];
+          globalThis.localStorage = { setItem: (k, v) => log.push([k, v]) };
+          globalThis.document = {};
+          globalThis.axe = { run: async () => resultsFor(url, theme()) };
+          try {
+            return await fn(arg);
+          } finally {
+            delete globalThis.localStorage;
+            delete globalThis.document;
+            delete globalThis.axe;
           }
-          return resultsFor(url, log.filter((l) => l[0] === 'theme').at(-1)?.[1]);
         },
         async reload() {
           log.push(['reload']);
@@ -223,5 +230,17 @@ describe('main', () => {
       1,
     );
     assert.match(lines.join('\n'), /no Chrome found; set CHROME_PATH/);
+  });
+});
+
+describe('main, against the real Chrome', () => {
+  it('launches the installed Chrome and runs axe on a page', async () => {
+    put(
+      'index.html',
+      '<!DOCTYPE html><html lang="en"><head><title>t</title></head><body><main><h1>Fine</h1></main></body></html>',
+    );
+    const lines = [];
+    const code = await main([root], { log: (l) => lines.push(l) });
+    assert.equal(code, 0, lines.join('\n'));
   });
 });
