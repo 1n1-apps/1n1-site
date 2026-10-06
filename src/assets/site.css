@@ -1,0 +1,611 @@
+/* 1n1 site — direction A, "Two halves" (ADR 0003). docs/design/visual-system.md documents these
+   tokens; every colour, size and font below comes from them. Dark is the default theme; light is
+   chosen with the toggle and remembered. */
+
+@font-face {
+  font-family: 'Archivo';
+  src: url('/assets/fonts/archivo-1n1.woff2') format('woff2');
+  font-weight: 400 800;
+  font-stretch: 100% 125%;
+  font-display: swap;
+}
+
+:root {
+  /* Brand colours (ADR 0002 in 1n1-studio). */
+  --ink: #06302e;
+  --paper: #f2faf8;
+  --fuchsia: #ec3a86;
+
+  /* Dark theme, the default. */
+  --ground: var(--ink);
+  --text: var(--paper);
+  --muted: #a9c6c1;
+  --line: #1e4e4a;
+  --half-ground: var(--paper);
+  --half-text: var(--ink);
+  --accent: var(--fuchsia);
+
+  --sans: 'Archivo', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --step--1: 0.875rem;
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: 1.75rem;
+  --step-3: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
+  --step-4: clamp(2.25rem, 1.2rem + 4vw, 4.25rem);
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --gutter: clamp(1rem, 0.6rem + 2vw, 3.5rem);
+  --measure: 66ch;
+  --radius: 22%;
+  --cut: 8px;
+  --ease: cubic-bezier(0.2, 0.7, 0.1, 1);
+  --duration: 420ms;
+
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  --ground: var(--paper);
+  --text: var(--ink);
+  --muted: #3d5d59;
+  --line: #c4dad5;
+  --half-ground: var(--ink);
+  --half-text: var(--paper);
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 100%;
+  line-height: 1.55;
+  -webkit-text-size-adjust: 100%;
+  scrollbar-color: var(--muted) var(--ground);
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--ink);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+p,
+ul,
+dl {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  text-decoration-thickness: 3px;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip {
+  position: absolute;
+  left: var(--space-4);
+  top: -4rem;
+  z-index: 3;
+  padding: var(--space-2) var(--space-4);
+  background: var(--accent);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.skip:focus {
+  top: var(--space-4);
+}
+
+/* The page: the half, the divider, the column. One column on a phone; side by side from 760 px. */
+.page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto 1fr;
+  min-height: 100vh;
+}
+
+.half {
+  background: var(--half-ground);
+  color: var(--half-text);
+  padding: var(--space-6) var(--gutter) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  --a: var(--accent);
+  --bg: var(--half-ground);
+}
+
+.half .top {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32em;
+  font-size: 1.625rem;
+  text-decoration: none;
+  align-self: flex-start;
+}
+
+.mk {
+  display: block;
+  flex: none;
+  height: 1.12em;
+  width: calc(1.12em * 60 / 92);
+  color: var(--half-text);
+}
+
+.wm {
+  font-weight: 800;
+  font-stretch: 125%;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.wm i {
+  font-style: normal;
+  color: var(--accent);
+}
+
+.hl {
+  font-size: var(--step-3);
+  font-weight: 800;
+  font-stretch: 125%;
+  letter-spacing: -0.015em;
+  line-height: 1.04;
+  max-width: 14ch;
+}
+
+.half nav ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: var(--space-5);
+  font-weight: 600;
+}
+
+.half nav a {
+  display: inline-block;
+  padding-block: var(--space-2);
+}
+
+.half nav a[aria-current='page'] {
+  text-decoration-thickness: 4px;
+}
+
+.half .mail {
+  font-size: var(--step--1);
+}
+
+.half.inner .hl,
+.half.inner .mail {
+  display: none;
+}
+
+.half.inner {
+  padding-block: var(--space-5);
+  gap: var(--space-3);
+}
+
+.half.inner .top {
+  gap: var(--space-3);
+}
+
+.divide {
+  height: var(--cut);
+  background: var(--ground);
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.body {
+  padding: var(--space-6) var(--gutter) var(--space-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  flex: 1;
+}
+
+.body > h1,
+.policy h1,
+.apphero h1 {
+  font-size: var(--step-3);
+  font-weight: 800;
+  font-stretch: 125%;
+  letter-spacing: -0.015em;
+}
+
+.body h2 {
+  font-size: var(--step--1);
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: var(--space-3);
+}
+
+.bio {
+  max-width: var(--measure);
+  font-size: var(--step-1);
+}
+
+.big {
+  font-size: var(--step-2);
+  font-weight: 700;
+}
+
+/* Apps */
+.applist {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.app {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  padding-block: var(--space-5);
+  border-top: 2px solid var(--text);
+}
+
+.app h3,
+.app .h3 {
+  font-size: var(--step-2);
+  font-weight: 800;
+  font-stretch: 125%;
+  color: var(--text);
+  margin: 0 0 var(--space-1);
+}
+
+.app h3 a,
+.app .h3 a {
+  text-decoration: none;
+}
+
+.app h3 a:hover,
+.app .h3 a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+}
+
+.appicon {
+  display: block;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius);
+}
+
+.applinks {
+  margin-top: var(--space-2);
+}
+
+.status {
+  margin-top: var(--space-1);
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* App page */
+.crumb {
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+.apphero {
+  display: flex;
+  gap: var(--space-5);
+  align-items: center;
+}
+
+.apphero .appicon {
+  width: 88px;
+  height: 88px;
+}
+
+.apphero .line {
+  font-size: var(--step-1);
+}
+
+.cta {
+  margin-top: var(--space-3);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--space-5);
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--ground);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.feat {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-5);
+}
+
+.feat h3 {
+  font-size: var(--step-1);
+  font-weight: 700;
+  margin-bottom: var(--space-1);
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3) var(--space-5);
+}
+
+.meta dt {
+  font-weight: 700;
+}
+
+.meta dd {
+  margin: 0;
+}
+
+.plain {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-size: var(--step-1);
+}
+
+/* Privacy policy */
+.policy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.updated {
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+.tablewrap {
+  overflow-x: auto;
+}
+
+.policy table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--step--1);
+  font-variant-numeric: tabular-nums;
+}
+
+.policy th,
+.policy td {
+  text-align: left;
+  vertical-align: top;
+  padding: var(--space-3) var(--space-4) var(--space-3) 0;
+  border-top: 1px solid var(--line);
+}
+
+.policy thead th {
+  border-top: 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.prose {
+  max-width: var(--measure);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.prose h2 {
+  font-size: var(--step-1);
+  color: var(--text);
+  margin: var(--space-4) 0 0;
+}
+
+.prose ul {
+  padding-left: 1.2em;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Footer */
+.ft {
+  padding: var(--space-5) var(--gutter) var(--space-6);
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+/* The theme toggle: the top-right corner. The icon is a sun in light and a moon in dark: a cut
+   circle slides over the disc and the rays draw in or out. */
+.theme {
+  position: fixed;
+  top: max(var(--space-4), env(safe-area-inset-top, 0px));
+  right: var(--space-4);
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--ground);
+  color: var(--text);
+  cursor: pointer;
+  padding: 0;
+}
+
+.theme-icon {
+  width: 24px;
+  height: 24px;
+  overflow: visible;
+}
+
+.theme-icon .disc {
+  fill: currentColor;
+  transform-origin: 12px 12px;
+  transition: transform var(--duration) var(--ease);
+}
+
+.theme-icon .cut {
+  transition: transform var(--duration) var(--ease);
+}
+
+.theme-icon .rays {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  transform-origin: 12px 12px;
+  transition:
+    transform var(--duration) var(--ease),
+    opacity var(--duration) var(--ease);
+}
+
+/* Dark: the moon. The disc grows, the cut slides in, the rays fold away. */
+:root:not([data-theme='light']) .theme-icon .disc {
+  transform: scale(1.35);
+}
+
+:root:not([data-theme='light']) .theme-icon .cut {
+  transform: translate(-7px, 3px);
+}
+
+:root:not([data-theme='light']) .theme-icon .rays {
+  transform: rotate(-60deg) scale(0.4);
+  opacity: 0;
+}
+
+/* Light: the sun. */
+:root[data-theme='light'] .theme-icon .cut {
+  transform: translate(6px, -6px);
+}
+
+.theme:hover {
+  border-color: var(--accent);
+}
+
+@media (min-width: 760px) {
+  .page {
+    grid-template-columns: minmax(0, 5fr) var(--cut) minmax(0, 7fr);
+    grid-template-rows: auto;
+  }
+
+  .half,
+  .half.inner {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: var(--space-8) var(--space-7);
+    justify-content: space-between;
+  }
+
+  .half .top,
+  .half.inner .top {
+    gap: var(--space-7);
+  }
+
+  .hl {
+    font-size: var(--step-4);
+  }
+
+  .half.inner .hl {
+    display: block;
+    font-size: var(--step-3);
+  }
+
+  .half.inner .mail {
+    display: block;
+  }
+
+  .divide {
+    height: auto;
+  }
+
+  .body {
+    padding: var(--space-8) var(--space-7) var(--space-8);
+    gap: var(--space-7);
+  }
+
+  .ft {
+    padding-inline: var(--space-7);
+  }
+
+  .feat {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-icon .disc,
+  .theme-icon .cut,
+  .theme-icon .rays {
+    transition: none;
+  }
+}
