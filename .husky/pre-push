@@ -1,3 +1,7 @@
 bun run deps:trust-check
+bun run typecheck
 bun run test
 bun scripts/check-adr-format.mjs
+# lint builds the site first, so check:links reads a fresh _site.
+bun run lint
+bun run check:links
