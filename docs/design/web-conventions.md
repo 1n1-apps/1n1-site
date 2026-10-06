@@ -1,6 +1,6 @@
 # Web conventions
 
-How pages in this repository are built, whatever tooling E2-A1 chooses. `visual-system.md` owns the
+How pages in this repository are built, with Eleventy (ADR 0002). `visual-system.md` owns the
 tokens these rules apply; `docs/runbooks/deploy.md` owns the build and hosting.
 
 ## Structure
@@ -38,9 +38,10 @@ tokens these rules apply; `docs/runbooks/deploy.md` owns the build and hosting.
 
 ## Scripting
 
-- No script by default. A page works fully with scripting disabled.
-- Script only for an enhancement a page cannot have otherwise, each one named in an ADR, progressive,
-  and under 10 KB transferred.
+- Scripts are allowed where a page needs one (owner, 2026-10-06): static means no server, not no
+  scripts. Use one only for behaviour HTML and CSS cannot give, and keep the page usable without it.
+- Each script is unit-tested, type-checked by `bun run typecheck`, and named in an ADR when it changes
+  how the site behaves. The first is the theme toggle (ADR 0003).
 - No analytics, trackers, embeds, or requests to any host but the site's own.
 
 ## Accessibility
@@ -72,7 +73,7 @@ images, link context), and the browser review covers it.
 
 ## Testing
 
-- Scripts and page logic have unit tests under `node --test` (or the runner E2-A1 wires), written
+- Scripts and page logic have unit tests under `node --test` (`tests/`), written
   first, at 100 percent function coverage.
 - The built output is checked, not the source: `check:links` for every internal link, asset and
   anchor; `check:a11y` for the rules above.
