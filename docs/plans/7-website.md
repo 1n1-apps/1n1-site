@@ -152,8 +152,8 @@ The merged manifest's other permissions, none of which prompts or sends anything
 | `BIND_GET_INSTALL_REFERRER_SERVICE` | The ads SDK | No | The ads row |
 | `c2dm.permission.RECEIVE` | `expo-notifications` (push) | No | Inert: the app has no push service configured |
 | `READ_APP_BADGE` and the launcher badge permissions | `expo-notifications` | No | Badge counts on the launcher; nothing leaves the phone |
-| `SYSTEM_ALERT_WINDOW` | Expo's default main manifest | No: a special access only the person can turn on in Android's settings | Unused by the app. **Owner question:** remove it in an app ticket |
-| `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE` | Expo's default main manifest | Only on Android 12 and older, and the app never asks | Unused (Export data uses the system file picker). **Owner question:** remove with `SYSTEM_ALERT_WINDOW` |
+| `SYSTEM_ALERT_WINDOW` | Expo's default main manifest | No: a special access only the person can turn on in Android's settings | Unused by the app; alarms use the full-screen intent. Blocked in `app.json` by the app repository's #419 (owner, 2026-10-06) |
+| `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE` | Expo's default main manifest | Only on Android 12 and older, and the app never asks | Unused (Export data uses the system file picker). Blocked with `SYSTEM_ALERT_WINDOW` in #419 |
 
 **Ads and the release:** the policy describes Meantime as it will be at its first store release, which
 includes ads (#417). No build of Meantime is on any store yet, so publishing this policy before #417
