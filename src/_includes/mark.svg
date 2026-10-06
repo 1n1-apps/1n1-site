@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 1n1 mark: the domino (kit mark 52), on the 100-unit grid. Main colour for the tile, the accent
+     for the two pips, the ground for the divider. Per ADR 0002. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect x="22" y="6" width="56" height="88" rx="14" fill="currentColor"/>
+  <path d="M30 50h40" fill="none" stroke-width="4" style="stroke:var(--bg)"/>
+  <circle cx="50" cy="28" r="8" style="fill:var(--a)"/>
+  <circle cx="50" cy="72" r="8" style="fill:var(--a)"/>
+</svg>
