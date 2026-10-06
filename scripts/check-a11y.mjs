@@ -78,36 +78,68 @@ export function serve(root) {
   });
 }
 
-/** Run axe on every path in each theme; return the serious and critical findings. */
-export async function audit({ baseUrl, paths, browser, axeSource, themes = ['dark', 'light'] }) {
+/** The widths every page is audited at: the phone layout and the two-column layout. */
+export const VIEWPORTS = [
+  { name: 'phone', width: 390, height: 844 },
+  { name: 'desktop', width: 1280, height: 800 },
+];
+
+/**
+ * Run axe on every path at each width in each theme; return the serious and critical findings. A
+ * page that doesn't show the theme it was asked for is itself a finding, because its axe run would
+ * have checked the other theme twice.
+ */
+export async function audit({
+  baseUrl,
+  paths,
+  browser,
+  axeSource,
+  themes = ['dark', 'light'],
+  viewports = VIEWPORTS,
+}) {
   const findings = [];
   for (const path of paths) {
-    for (const theme of themes) {
-      const page = await browser.newPage();
-      await page.goto(baseUrl + path);
-      await page.evaluate((t) => localStorage.setItem('theme', t), theme);
-      await page.reload();
-      await page.addScriptTag({ content: axeSource });
-      const results = await page.evaluate(() =>
-        // eslint-disable-next-line no-undef
-        axe.run(document, {
-          runOnly: {
-            type: 'tag',
-            values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'],
-          },
-        }),
-      );
-      for (const v of serious(results.violations)) {
-        findings.push({
-          path,
-          theme,
-          id: v.id,
-          impact: v.impact,
-          help: v.help,
-          count: v.nodes.length,
-        });
+    for (const viewport of viewports) {
+      for (const theme of themes) {
+        const page = await browser.newPage();
+        await page.setViewport({ width: viewport.width, height: viewport.height });
+        await page.goto(baseUrl + path);
+        await page.evaluate((t) => localStorage.setItem('theme', t), theme);
+        await page.reload();
+        const shown = await page.evaluate(() => document.documentElement.dataset.theme);
+        const where = { path, theme, viewport: viewport.name };
+        if (shown !== theme) {
+          findings.push({
+            ...where,
+            id: 'theme-not-applied',
+            impact: 'critical',
+            help: `The page shows ${shown}, not ${theme}, so this theme was never checked`,
+            count: 1,
+          });
+          await page.close();
+          continue;
+        }
+        await page.addScriptTag({ content: axeSource });
+        const results = await page.evaluate(() =>
+          // eslint-disable-next-line no-undef
+          axe.run(document, {
+            runOnly: {
+              type: 'tag',
+              values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'],
+            },
+          }),
+        );
+        for (const v of serious(results.violations)) {
+          findings.push({
+            ...where,
+            id: v.id,
+            impact: v.impact,
+            help: v.help,
+            count: v.nodes.length,
+          });
+        }
+        await page.close();
       }
-      await page.close();
     }
   }
   return findings;
@@ -156,13 +188,13 @@ export async function main(
     });
     if (findings.length === 0) {
       log(
-        `check:a11y: ${paths.length} page${paths.length === 1 ? '' : 's'} in 2 themes, no serious or critical findings.`,
+        `check:a11y: ${paths.length} page${paths.length === 1 ? '' : 's'} in 2 themes at phone and desktop widths, no serious or critical findings.`,
       );
       return 0;
     }
     for (const f of findings) {
       log(
-        `check:a11y: ${f.path} (${f.theme}): ${f.id}, ${f.impact}, ${f.count} element${f.count === 1 ? '' : 's'}: ${f.help}`,
+        `check:a11y: ${f.path} (${f.theme}, ${f.viewport}): ${f.id}, ${f.impact}, ${f.count} element${f.count === 1 ? '' : 's'}: ${f.help}`,
       );
     }
     return 1;

@@ -92,8 +92,9 @@ describe('serve', () => {
   });
 });
 
-// A browser double: each page records what it was asked and answers with canned axe results.
-function fakeBrowser(resultsFor) {
+// A browser double: each page records what it was asked and answers with canned axe results. The
+// page applies the stored theme to <html data-theme> unless `ignoresTheme` says it doesn't.
+function fakeBrowser(resultsFor, { ignoresTheme = false } = {}) {
   const log = [];
   return {
     log,
@@ -109,7 +110,9 @@ function fakeBrowser(resultsFor) {
         async evaluate(fn, arg) {
           const theme = () => log.filter((l) => l[0] === 'theme').at(-1)?.[1];
           globalThis.localStorage = { setItem: (k, v) => log.push([k, v]) };
-          globalThis.document = {};
+          globalThis.document = {
+            documentElement: { dataset: { theme: ignoresTheme ? 'dark' : theme() } },
+          };
           globalThis.axe = { run: async () => resultsFor(url, theme()) };
           try {
             return await fn(arg);
@@ -121,6 +124,9 @@ function fakeBrowser(resultsFor) {
         },
         async reload() {
           log.push(['reload']);
+        },
+        async setViewport({ width }) {
+          log.push(['viewport', width]);
         },
         async addScriptTag({ content }) {
           log.push(['axe', content.length]);
@@ -150,11 +156,13 @@ describe('audit', () => {
       paths: ['/', '/apps/'],
       browser,
       axeSource: 'axe!',
+      viewports: [{ name: 'desktop', width: 1280, height: 800 }],
     });
     assert.deepEqual(findings, [
       {
         path: '/apps/',
         theme: 'light',
+        viewport: 'desktop',
         id: 'color-contrast',
         impact: 'serious',
         help: 'Contrast',
@@ -166,6 +174,37 @@ describe('audit', () => {
       browser.log.filter((l) => l[0] === 'theme').map((l) => l[1]),
       ['dark', 'light', 'dark', 'light'],
     );
+  });
+
+  it('audits every page at a phone and a desktop width by default', async () => {
+    const browser = fakeBrowser(() => ({ violations: [] }));
+    await audit({ baseUrl: 'http://h', paths: ['/'], browser, axeSource: 'axe' });
+    assert.deepEqual(
+      browser.log.filter((l) => l[0] === 'viewport').map((l) => l[1]),
+      [390, 390, 1280, 1280],
+    );
+  });
+
+  it('reports a page that did not take the theme it was asked for', async () => {
+    const browser = fakeBrowser(() => ({ violations: [] }), { ignoresTheme: true });
+    const findings = await audit({
+      baseUrl: 'http://h',
+      paths: ['/'],
+      browser,
+      axeSource: 'axe',
+      viewports: [{ name: 'phone', width: 390, height: 844 }],
+    });
+    assert.deepEqual(findings, [
+      {
+        path: '/',
+        theme: 'light',
+        viewport: 'phone',
+        id: 'theme-not-applied',
+        impact: 'critical',
+        help: 'The page shows dark, not light, so this theme was never checked',
+        count: 1,
+      },
+    ]);
   });
 });
 
@@ -185,7 +224,7 @@ describe('main', () => {
     assert.ok(browser.closed);
     assert.match(
       lines.join('\n'),
-      /check:a11y: 1 page in 2 themes, no serious or critical findings/,
+      /check:a11y: 1 page in 2 themes at phone and desktop widths, no serious or critical findings/,
     );
   });
 
@@ -203,7 +242,10 @@ describe('main', () => {
       axeSource: 'axe',
     });
     assert.equal(code, 1);
-    assert.match(lines.join('\n'), /\/ \(dark\): image-alt, critical, 1 element: Images need alt/);
+    assert.match(
+      lines.join('\n'),
+      /\/ \(dark, phone\): image-alt, critical, 1 element: Images need alt/,
+    );
   });
 
   it('fails without a built site or without Chrome', async () => {
@@ -233,12 +275,26 @@ describe('main', () => {
   });
 });
 
+// A page shaped like the site: dark unless the stored theme says light, applied by a head script.
+function themedPage(lightStyle) {
+  return `<!DOCTYPE html><html lang="en" data-theme="dark"><head><title>t</title>
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
+<style>body{background:#06302e;color:#f2faf8}[data-theme=light] body{${lightStyle}}</style>
+</head><body><main><h1>Fine</h1><p>Some text.</p></main></body></html>`;
+}
+
 describe('main, against the real Chrome', () => {
+  it('finds a contrast failure that exists only in the light theme', async () => {
+    put('index.html', themedPage('background:#fff;color:#ccc'));
+    const lines = [];
+    const code = await main([root], { log: (l) => lines.push(l) });
+    assert.equal(code, 1, lines.join('\n'));
+    assert.match(lines.join('\n'), /\/ \(light, phone\): color-contrast/);
+    assert.doesNotMatch(lines.join('\n'), /\(dark/);
+  });
+
   it('launches the installed Chrome and runs axe on a page', async () => {
-    put(
-      'index.html',
-      '<!DOCTYPE html><html lang="en"><head><title>t</title></head><body><main><h1>Fine</h1></main></body></html>',
-    );
+    put('index.html', themedPage('background:#f2faf8;color:#06302e'));
     const lines = [];
     const code = await main([root], { log: (l) => lines.push(l) });
     assert.equal(code, 0, lines.join('\n'));
