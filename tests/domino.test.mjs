@@ -10,6 +10,7 @@ import {
   pop,
   save,
   settled,
+  sizeFor,
   step,
 } from '../src/assets/domino.js';
 
@@ -56,16 +57,64 @@ describe('step', () => {
   });
 
   it('comes to rest upright, on a multiple of 180 degrees', () => {
-    const s = { angle: 0, speed: 1500 };
-    for (let i = 0; i < 600; i++) step(s, 1 / 60);
+    const s = { angle: 0, speed: MAX_SPEED };
+    for (let i = 0; i < 900; i++) step(s, 1 / 60);
     assert.ok(settled(s), `still moving: ${JSON.stringify(s)}`);
     assert.equal(s.angle % 180, 0);
   });
 
+  it('settles forward, never turning back the way it came', () => {
+    for (const start of [
+      { angle: 0, speed: FLICK },
+      { angle: 0, speed: POP },
+      { angle: 10, speed: 20 },
+    ]) {
+      const s = { ...start };
+      let last = s.angle;
+      for (let i = 0; i < 900; i++) {
+        step(s, 1 / 60);
+        const angle = s.angle < last - 180 ? s.angle + 360 : s.angle;
+        assert.ok(angle >= last - 0.01, `turned back from ${last} to ${s.angle}`);
+        last = angle;
+      }
+      assert.ok(settled(s));
+    }
+  });
+
+  it('settles backwards the same way when it spins backwards', () => {
+    const s = { angle: 170, speed: -40 };
+    for (let i = 0; i < 900; i++) step(s, 1 / 60);
+    assert.equal(s.angle, 0);
+  });
+
+  it('turns a full half-turn at least from one flick', () => {
+    const s = { angle: 0, speed: FLICK };
+    for (let i = 0; i < 900; i++) step(s, 1 / 60);
+    assert.ok(s.angle === 0 || s.angle === 180, `rested at ${s.angle}`);
+    const travel = { angle: 0, speed: FLICK };
+    let total = 0;
+    for (let i = 0; i < 900; i++) {
+      const before = travel.angle;
+      step(travel, 1 / 60);
+      total += ((travel.angle - before + 540) % 360) - 180;
+    }
+    assert.ok(total >= 300, `travelled ${total}`);
+  });
+
   it('settles a slow turn back to the nearest upright side', () => {
     const s = { angle: 100, speed: 0 };
-    for (let i = 0; i < 600; i++) step(s, 1 / 60);
+    for (let i = 0; i < 900; i++) step(s, 1 / 60);
     assert.equal(s.angle, 180);
+  });
+});
+
+describe('sizeFor', () => {
+  it('grows with speed, either way, up to a third larger at the cap', () => {
+    assert.equal(sizeFor(0), 1);
+    assert.ok(sizeFor(MAX_SPEED / 2) > 1 && sizeFor(MAX_SPEED / 2) < sizeFor(MAX_SPEED));
+    assert.equal(sizeFor(-MAX_SPEED), sizeFor(MAX_SPEED));
+    assert.equal(sizeFor(MAX_SPEED * 5), sizeFor(MAX_SPEED));
+    assert.ok(Math.abs(sizeFor(MAX_SPEED) - 4 / 3) < 1e-9);
   });
 });
 

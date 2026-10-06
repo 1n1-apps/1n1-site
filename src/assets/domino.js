@@ -4,18 +4,19 @@
 // A click presses it down and pops it up spinning hard. The spin is saved as the page is left, so it
 // carries on across a page change. With reduced motion none of this runs.
 
-/** Degrees per second a flick adds. */
-export const FLICK = 540;
+/** Degrees per second a flick adds: one flick is enough for a full turn. */
+export const FLICK = 420;
 /** Degrees per second a click adds. */
-export const POP = 1800;
+export const POP = 900;
 /** The fastest it ever turns, in degrees per second. */
-export const MAX_SPEED = 3600;
+export const MAX_SPEED = 1800;
 /** How quickly friction slows it: the share of speed kept each second is e^-FRICTION. */
 const FRICTION = 1.4;
-/** Below this speed the spring takes over and brings it upright. */
+/** Below this speed the spring takes over and carries it on to the next upright side. */
 const SETTLE = 160;
-const STIFFNESS = 70;
-const DAMPING = 11;
+const STIFFNESS = 40;
+/** Critical damping: it arrives without swinging past and back. */
+const DAMPING = 2 * Math.sqrt(STIFFNESS);
 
 /** @typedef {{ angle: number, speed: number }} Spin */
 
@@ -41,22 +42,40 @@ export function settled(spin) {
 }
 
 /**
- * Move the spin on by `seconds`.
+ * How large the domino draws at a speed: up to a third larger at the cap, either way round.
+ * @param {number} speed
+ */
+export function sizeFor(speed) {
+  return 1 + Math.min(1, Math.abs(speed) / MAX_SPEED) / 3;
+}
+
+/** @param {number} angle */
+const upright = (angle) => ((angle % 360) + 360) % 360;
+
+/**
+ * Move the spin on by `seconds`. Once slow, it settles on the next upright side in the direction it
+ * is turning (the nearest, when still), and never turns back.
  * @param {Spin} spin
  * @param {number} seconds
  */
 export function step(spin, seconds) {
   spin.speed *= Math.exp(-FRICTION * seconds);
-  if (Math.abs(spin.speed) < SETTLE) {
-    const upright = Math.round(spin.angle / 180) * 180;
-    spin.speed += ((upright - spin.angle) * STIFFNESS - spin.speed * DAMPING) * seconds;
-    if (Math.abs(upright - spin.angle) < 0.5 && Math.abs(spin.speed) < 5) {
-      spin.angle = ((upright % 360) + 360) % 360;
-      spin.speed = 0;
-      return;
-    }
+  if (Math.abs(spin.speed) >= SETTLE) {
+    spin.angle += spin.speed * seconds;
+    return;
   }
-  spin.angle += spin.speed * seconds;
+  const half = spin.angle / 180;
+  const target =
+    180 * (spin.speed > 0 ? Math.ceil(half) : spin.speed < 0 ? Math.floor(half) : Math.round(half));
+  spin.speed += ((target - spin.angle) * STIFFNESS - spin.speed * DAMPING) * seconds;
+  const next = spin.angle + spin.speed * seconds;
+  const arrived = (next - target) * (spin.angle - target) <= 0 || Math.abs(target - next) < 0.5;
+  if (arrived && Math.abs(spin.speed) < SETTLE) {
+    spin.angle = upright(target);
+    spin.speed = 0;
+    return;
+  }
+  spin.angle = next;
 }
 
 /**
@@ -105,16 +124,20 @@ if (typeof document !== 'undefined') {
     let running = false;
     const draw = () => {
       mark.style.rotate = `${spin.angle}deg`;
+      mark.style.scale = String(sizeFor(spin.speed));
     };
     /** @param {number} now */
     const frame = (now) => {
       step(spin, Math.min(0.05, (now - last) / 1000));
       last = now;
       draw();
-      if (settled(spin)) running = false;
-      else requestAnimationFrame(frame);
+      if (settled(spin)) {
+        running = false;
+        brand.classList.remove('spinning');
+      } else requestAnimationFrame(frame);
     };
     const run = () => {
+      brand.classList.add('spinning');
       if (running) return;
       running = true;
       last = performance.now();
@@ -129,7 +152,11 @@ if (typeof document !== 'undefined') {
     });
     brand.addEventListener('pointerdown', () => brand.classList.add('pressed'));
     const release = () => brand.classList.remove('pressed');
-    brand.addEventListener('pointerleave', release);
+    brand.addEventListener('pointerleave', (event) => {
+      release();
+      flick(spin, event.movementX < 0 ? -1 : 1);
+      run();
+    });
     brand.addEventListener('pointercancel', release);
     brand.addEventListener('pointerup', () => {
       release();
