@@ -91,7 +91,8 @@ async function main() {
       `This token is issued only for Issue #${token.GH_HANDOFF_ISSUE_NUMBER}; it cannot update Issue #${issueNumber}.`,
     );
   }
-  const [owner, repo] = token.GH_REPOSITORY.split('/');
+  // This site's Issues are filed in 1n1-studio; the token names that repository.
+  const [owner, repo] = (token.GH_ISSUE_REPOSITORY ?? token.GH_REPOSITORY).split('/');
   const issueData = await githubGraphql(
     token.GH_TOKEN,
     `query IssueProjectItem($owner: String!, $repo: String!, $number: Int!) {
