@@ -155,9 +155,9 @@ bun scripts/check-adr-format.mjs
 bun scripts/check-pr-body.mjs .pr-body.md
 ```
 
-`build`, `preview`, `lint`, `typecheck`, `check:links` and `check:a11y` are the contract E2-A1
-(`1n1-studio` Issue #6) delivers with the site tooling; until then they are absent and the hooks and
-CI do not call them. `format:check` and `test` work from the first commit.
+`bun run coverage` holds the site's own code (`scripts/check-*.mjs`, `src/assets/*.js`,
+`eleventy.config.js`) to 100 percent of functions. CI runs every command above; `check:a11y` needs a
+Chrome (`CHROME_PATH` if it is not in the usual place). ADR 0002 records the tooling.
 
 Run every long command with a log and a time-box, so a hung process is visible and recoverable. At
 the time-box, inspect the log and the process rather than waiting longer.

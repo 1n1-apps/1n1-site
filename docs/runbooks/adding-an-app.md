@@ -1,16 +1,19 @@
 # Runbook: adding an app to the site
 
-The steps an app's arrival needs, in order. The exact mechanics of the first four depend on the
-tooling E2-A1 chooses; E4-T1 (`1n1-studio` #12) completes this runbook once the site exists and
-decides whether it becomes a skill.
+An app arrives as two files and its icon. No template changes.
 
-1. **The app's content entry:** store name, one-line description, the longer description from the
-   approved copy in `1n1-studio/copy/`, the store link (or `coming soon` until the listing is live),
-   and the app's icon as the app repository exports it.
-2. **The app page** at `/apps/<codename>`, rendered from the entry by the app template.
-3. **The apps index** gains the app.
-4. **The privacy policy** at `/privacy/<codename>`, written by `privacy-policies.md`'s procedure.
-   It must be live before the app is submitted to a store.
-5. **Evidence:** screenshots of the new pages at both viewports in both schemes, and the browser
-   review the plan names.
-6. **After the store listing is live:** replace `coming soon` with the store link, in its own small PR.
+1. **The icon:** copy the app's store icon (512 px, as the app repository's generator exports it) to
+   `src/assets/apps/<app>/icon-512.png`. Note the app repository's commit in the commit subject.
+2. **The app page:** `src/apps/<app>.md`, front matter only, copied from `src/apps/meantime.md`:
+   `name`, `slug`, `icon`, `line`, `summary`, `status` (`Coming to Google Play` until the listing is
+   live), `store` (the listing URL, empty until then), `features` and `details`, and `order` for its
+   place in the list. Words come from the approved copy in `1n1-studio/copy/`.
+3. **The privacy policy:** `src/privacy/<app>.md`, written by `privacy-policies.md`. It must be live
+   before the app is submitted to a store.
+4. **Build and check:** `bun run build`, `lint`, `check:links`, `check:a11y`. The home page and the
+   apps list pick the app up from its file.
+5. **Evidence:** screenshots of the new pages at a phone and a desktop width in both themes, and the
+   browser review the plan names.
+6. **After the store listing is live:** set `store` and change `status`, in its own small PR.
+
+URLs use the app's store name, lowercased: `/apps/meantime/`, `/privacy/meantime/`.

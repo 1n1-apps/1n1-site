@@ -27,12 +27,13 @@ pipeline is the factory's `deliver-app-issue`; this repository carries no skills
 
 ```sh
 bun install
-bun run format:check
+bun run build        # the site, into _site/
+bun run preview      # http://localhost:8080
 bun run test
-bun scripts/check-adr-format.mjs
+bun run lint && bun run typecheck && bun run check:links && bun run check:a11y
 ```
 
-`build`, `preview`, `lint`, `typecheck`, `check:links` and `check:a11y` arrive with the site tooling
-([E2-A1](https://github.com/1n1-apps/1n1-studio/issues/6)); the site itself is
+The site is built with Eleventy and deployed to GitHub Pages on every push to `main`
+(`docs/runbooks/deploy.md`); it was delivered by
 [E2-F1](https://github.com/1n1-apps/1n1-studio/issues/7). Work is tracked on the
 [1n1 Studio Project](https://github.com/orgs/1n1-apps/projects/2).
