@@ -214,5 +214,5 @@ runs again before the first submission.
   - `check:a11y` audits at rest with motion reduced.
 - **ADR reconciled:** ADR 0002 and ADR 0003 (decisions 1–8) match what was built; both `accepted`.
 - **Evidence captured:** 28 screenshots in `docs/evidence/issue-7-website/`, every page at 390 px and 1440 px in both themes, from the final build at rest.
-- **Release follow-up:** E16-T4 (app-dayweave #308) carries a note sending the release to `adding-an-app.md` § At release; the store checklist gains the same step (template-app #34, app-dayweave #420).
+- **Release follow-up:** E16-T4 (#308 in the Meantime app repository) carries a note sending the release to `adding-an-app.md` § At release; the store checklist gains the same step (in the template and the Meantime app repository).
 - **Nothing deferred:** every criterion is met.
