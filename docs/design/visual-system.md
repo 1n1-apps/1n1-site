@@ -40,8 +40,29 @@ underlines, focus rings and large marks, not for body copy. Every text pair abov
 
 ## Motion
 
-`--duration` 420 ms, `--ease` cubic-bezier(0.2, 0.7, 0.1, 1). The only motion is the theme toggle's
-icon; with `prefers-reduced-motion` it switches without moving.
+`--duration` 420 ms, `--ease` cubic-bezier(0.2, 0.7, 0.1, 1) for movement that settles, `--spring`
+cubic-bezier(0.34, 1.56, 0.64, 1) for the playful moments that overshoot. ADR 0003 decision 6 sets what
+moves:
+
+| Moment | Motion |
+| --- | --- |
+| Arriving | each block in the content, and on a fresh visit the half, rises 16 px into place in turn, 70 ms apart |
+| Changing page | a cross-document view transition: the half holds still, the content cross-fades |
+| Scrolling | cards and Plus items rise as they enter the window (scroll-driven, where supported) |
+| The domino | spins in on arrival; turns over (180°) when the logo is pointed at or focused |
+| Pointer | cards lift 4 px and take the accent border; app icons tilt; the button lifts onto an accent shadow; link underlines settle lower |
+| Theme | the new theme opens as a circle from the toggle (view transition), and the icon morphs |
+
+All of it sits in `@media (prefers-reduced-motion: no-preference)`: with reduced motion nothing moves,
+and the page is identical at rest. `check:a11y` audits the page at rest for that reason.
+
+## Cards and panels
+
+- **Card:** `--card` 18 px radius, 2 px `--line` border, a 10 px accent pip at the top (the domino's).
+  Features are cards.
+- **The paid-tier panel:** the half's colours (`--half-ground`, `--half-text`), so it reads as the
+  other side of the domino. Its items carry the same pip.
+- **Screenshots:** a row that scrolls sideways and snaps to each phone, 160–220 px wide.
 
 ## Layout
 

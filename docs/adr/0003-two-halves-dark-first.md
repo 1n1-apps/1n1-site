@@ -11,7 +11,8 @@ supersededBy: null
 
 > **Summary.** Every page is the 1n1 domino: one half holds the name, the line and the navigation,
 > the other the content, with the domino's divider between them. Dark is the default; a toggle in the
-> corner switches to light with an animated sun and moon, and remembers the choice.
+> corner switches to light with an animated sun and moon, and remembers the choice. Pages animate
+> in and between each other, and every app page has the same shape.
 
 ## Context
 
@@ -45,6 +46,17 @@ The identity itself, the domino mark, the 1·n·1 wordmark in Archivo and the fu
    light theme"). It is hidden without scripting.
 5. **Archivo is self-hosted**, trimmed to weight 400–800, width 100–125 and the Latin the site uses
    (48 KB; `src/assets/fonts/README.md`).
+6. **The site moves, and only as decoration** (owner, browser review, 2026-10-06: "nice animations
+   … how everything loads in, navigation, hover effects, and something on the logo"). Blocks rise in
+   on arrival; a page change is a cross-document view transition that holds the half still; cards
+   rise as they scroll in; the domino spins in and turns over on hover; the new theme opens as a
+   circle from the toggle. CSS does all of it except the theme circle, which `theme.js` starts. With
+   `prefers-reduced-motion` nothing moves, and a browser without view transitions changes pages and
+   themes at once. `docs/design/visual-system.md` § Motion lists each moment.
+7. **An app page has a fixed shape for every app:** heading with the store button (or the status until
+   the listing is live), screenshots once released, the app's real features as cards, a panel for the
+   paid tier when there is one, then details. The content file decides which parts appear; the
+   template never changes for an app (`docs/runbooks/adding-an-app.md`).
 
 ## Alternatives considered
 
@@ -66,7 +78,9 @@ The identity itself, the domino mark, the 1·n·1 wordmark in Archivo and the fu
 ## Enforcement / verification
 
 - `check:a11y` runs every page in both themes; contrast failures fail CI.
-- `tests/theme.test.mjs` covers the toggle's reading, labelling and switching.
+- `tests/theme.test.mjs` covers the toggle's reading, labelling and switching, and the theme circle's
+  fallbacks.
+- `check:a11y` audits every page at rest, with motion reduced.
 
 ## Related ADRs
 
