@@ -82,8 +82,8 @@ body {
 }
 
 ::selection {
-  background: var(--accent);
-  color: var(--ink);
+  background: var(--text);
+  color: var(--ground);
 }
 
 h1,
@@ -133,8 +133,10 @@ a:hover {
   top: -4rem;
   z-index: 3;
   padding: var(--space-2) var(--space-4);
-  background: var(--accent);
-  color: var(--ink);
+  /* Text on fuchsia is under 4.5:1; fuchsia marks the outline only. */
+  background: var(--text);
+  color: var(--ground);
+  outline: 3px solid var(--accent);
   font-weight: 700;
 }
 
@@ -214,9 +216,14 @@ a:hover {
   font-weight: 600;
 }
 
-.half nav a {
-  display: inline-block;
-  padding-block: var(--space-2);
+/* Navigation, the address and the footer links are tap targets: at least 44 by 44 px. */
+.half nav a,
+.half .mail a,
+.ft a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
 }
 
 .half nav a[aria-current='page'] {
