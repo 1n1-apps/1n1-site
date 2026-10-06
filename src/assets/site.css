@@ -45,7 +45,9 @@
   --radius: 22%;
   --cut: 8px;
   --ease: cubic-bezier(0.2, 0.7, 0.1, 1);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --duration: 420ms;
+  --card: 18px;
 
   color-scheme: dark;
 }
@@ -110,6 +112,7 @@ a {
 
 a:hover {
   text-decoration-thickness: 3px;
+  text-underline-offset: 0.3em;
 }
 
 :focus-visible {
@@ -386,17 +389,132 @@ a:hover {
   text-decoration: none;
 }
 
+.cta .status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  margin: 0;
+  padding: 0 var(--space-4);
+  border: 2px solid var(--line);
+  border-radius: 999px;
+}
+
+/* Screenshots: a row that scrolls sideways and snaps to each phone. */
+.shots {
+  list-style: none;
+  padding: 0 0 var(--space-3);
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(160px, 220px);
+  gap: var(--space-4);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+}
+
+.shots li {
+  scroll-snap-align: start;
+}
+
+.shots img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--card);
+  border: 2px solid var(--line);
+}
+
 .feat {
   list-style: none;
   padding: 0;
   display: grid;
-  gap: var(--space-5);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  gap: var(--space-4);
 }
 
-.feat h3 {
+.card {
+  position: relative;
+  padding: var(--space-5);
+  border: 2px solid var(--line);
+  border-radius: var(--card);
+}
+
+.card::before {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  margin-bottom: var(--space-3);
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.feat h3,
+.unlocks h3 {
   font-size: var(--step-1);
   font-weight: 700;
   margin-bottom: var(--space-1);
+}
+
+.feat p {
+  color: var(--muted);
+}
+
+/* The paid tier: the half's colours, so it reads as the other side of the domino. */
+.plus {
+  padding: var(--space-6) var(--space-5);
+  border-radius: calc(var(--card) + 6px);
+  background: var(--half-ground);
+  color: var(--half-text);
+}
+
+.plus h2 {
+  font-size: var(--step-3);
+  font-weight: 800;
+  font-stretch: 125%;
+  text-transform: none;
+  letter-spacing: -0.02em;
+  color: inherit;
+  margin: 0 0 var(--space-2);
+}
+
+.plushead {
+  margin-bottom: var(--space-5);
+}
+
+.terms {
+  font-size: var(--step-1);
+}
+
+.unlocks {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  gap: var(--space-5) var(--space-5);
+}
+
+.unlocks li {
+  padding-left: var(--space-5);
+  position: relative;
+}
+
+.unlocks li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.trial {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 2px solid currentColor;
+  font-weight: 600;
 }
 
 .meta {
@@ -617,8 +735,8 @@ a:hover {
     padding-inline: var(--space-7);
   }
 
-  .feat {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .plus {
+    padding: var(--space-7) var(--space-6);
   }
 }
 
@@ -627,5 +745,215 @@ a:hover {
   .theme-icon .cut,
   .theme-icon .rays {
     transition: none;
+  }
+}
+
+/* Motion (ADR 0003, decision 6). Everything here is decoration: the page reads the same without it,
+   and none of it runs for a visitor who asks for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Page to page: the half stays put, the content crossfades as it rises in. */
+  @view-transition {
+    navigation: auto;
+  }
+
+  .half {
+    view-transition-name: half;
+  }
+
+  .theme {
+    view-transition-name: toggle;
+  }
+
+  .body {
+    view-transition-name: content;
+  }
+
+  ::view-transition-group(half),
+  ::view-transition-old(half),
+  ::view-transition-new(half),
+  ::view-transition-group(toggle),
+  ::view-transition-old(toggle),
+  ::view-transition-new(toggle) {
+    animation: none;
+  }
+
+  ::view-transition-old(half),
+  ::view-transition-old(toggle) {
+    opacity: 0;
+  }
+
+  ::view-transition-old(content) {
+    animation: fade-out 180ms ease-in both;
+  }
+
+  ::view-transition-new(content) {
+    animation: fade-in 260ms ease-out both;
+  }
+
+  /* The theme toggle: the new theme opens as a circle from the button (theme.js). */
+  :root.theming .half,
+  :root.theming .theme,
+  :root.theming .body {
+    view-transition-name: none;
+  }
+
+  :root.theming::view-transition-old(root) {
+    animation: none;
+  }
+
+  :root.theming::view-transition-new(root) {
+    animation: reveal 620ms var(--ease) both;
+  }
+
+  /* Arriving: each block rises into place in turn. The half only does this on a fresh visit; when a
+     page is reached through a view transition (the inline head script marks it), it's already there. */
+  .body > *,
+  .half .top > *,
+  .half .mail {
+    animation: rise 640ms var(--ease) both;
+  }
+
+  .body > :nth-child(2),
+  .half .top > :nth-child(2) {
+    animation-delay: 70ms;
+  }
+
+  .body > :nth-child(3),
+  .half .top > :nth-child(3) {
+    animation-delay: 140ms;
+  }
+
+  .body > :nth-child(4),
+  .half .mail {
+    animation-delay: 210ms;
+  }
+
+  .body > :nth-child(n + 5) {
+    animation-delay: 280ms;
+  }
+
+  :root.arrived .half .top > *,
+  :root.arrived .half .mail,
+  :root.arrived .mk {
+    animation: none;
+  }
+
+  /* The domino: it spins in on arrival, and turns over whenever the logo is pointed at. */
+  .mk {
+    animation: domino-in 900ms var(--spring) 120ms both;
+  }
+
+  .brand:hover .mk,
+  .brand:focus-visible .mk {
+    animation: domino-spin 700ms var(--spring);
+  }
+
+  /* Cards and rows answer the pointer. */
+  @supports (animation-timeline: view()) {
+    .feat > li,
+    .unlocks > li,
+    .shots > li {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+  }
+
+  a {
+    transition:
+      text-decoration-thickness 180ms var(--ease),
+      text-underline-offset 180ms var(--ease);
+  }
+
+  .card {
+    transition:
+      transform 260ms var(--ease),
+      border-color 260ms var(--ease);
+  }
+
+  .card::before,
+  .unlocks li::before {
+    transition: transform 320ms var(--spring);
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+  }
+
+  .card:hover::before,
+  .unlocks li:hover::before {
+    transform: scale(1.6);
+  }
+
+  .appicon {
+    transition: transform 360ms var(--spring);
+  }
+
+  .app:hover .appicon,
+  .apphero:hover .appicon {
+    transform: rotate(-6deg) scale(1.06);
+  }
+
+  .btn {
+    transition:
+      transform 220ms var(--ease),
+      box-shadow 220ms var(--ease);
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 0 var(--accent);
+  }
+
+  .theme {
+    transition:
+      border-color 200ms var(--ease),
+      transform 300ms var(--spring);
+  }
+
+  .theme:hover {
+    transform: rotate(-12deg) scale(1.06);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes reveal {
+  from {
+    clip-path: circle(0 at var(--tx, 100%) var(--ty, 0));
+  }
+  to {
+    clip-path: circle(150vmax at var(--tx, 100%) var(--ty, 0));
+  }
+}
+
+@keyframes domino-in {
+  from {
+    opacity: 0;
+    transform: rotate(-180deg) scale(0.4);
+  }
+}
+
+@keyframes domino-spin {
+  to {
+    transform: rotate(180deg);
   }
 }
