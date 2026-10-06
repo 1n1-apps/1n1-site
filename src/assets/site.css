@@ -219,6 +219,7 @@ a:hover {
 /* Navigation, the address and the footer links are tap targets: at least 44 by 44 px. */
 .half nav a,
 .half .mail a,
+.applinks a,
 .ft a {
   display: inline-flex;
   align-items: center;
