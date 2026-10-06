@@ -551,6 +551,17 @@ a:hover {
   border-color: var(--accent);
 }
 
+/* The half stays in view only where all of it fits; on a short window it scrolls with the page, so
+   the navigation is never held below the fold. */
+@media (min-width: 760px) and (min-height: 720px) {
+  .half,
+  .half.inner {
+    position: sticky;
+    top: 0;
+    align-self: start;
+  }
+}
+
 @media (min-width: 760px) {
   .page {
     grid-template-columns: minmax(0, 5fr) var(--cut) minmax(0, 7fr);
@@ -559,9 +570,9 @@ a:hover {
 
   .half,
   .half.inner {
-    position: sticky;
-    top: 0;
-    height: 100vh;
+    /* At least the window's height, and taller when its content needs it: a fixed height clipped
+       the navigation on short windows (a phone held sideways, a zoomed desktop). */
+    min-height: 100vh;
     padding: var(--space-8) var(--space-7);
     justify-content: space-between;
   }
