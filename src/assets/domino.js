@@ -152,11 +152,7 @@ if (typeof document !== 'undefined') {
     });
     brand.addEventListener('pointerdown', () => brand.classList.add('pressed'));
     const release = () => brand.classList.remove('pressed');
-    brand.addEventListener('pointerleave', (event) => {
-      release();
-      flick(spin, event.movementX < 0 ? -1 : 1);
-      run();
-    });
+    brand.addEventListener('pointerleave', release);
     brand.addEventListener('pointercancel', release);
     brand.addEventListener('pointerup', () => {
       release();

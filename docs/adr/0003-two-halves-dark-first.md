@@ -50,7 +50,7 @@ The identity itself, the domino mark, the 1·n·1 wordmark in Archivo and the fu
    … how everything loads in, navigation, hover effects, and something on the logo"). Blocks rise in
    on arrival; a page change is a cross-document view transition that holds the half still; cards
    rise as they scroll in; the domino spins in and turns over on hover; the new theme opens as a
-   circle from the toggle. The domino is a toy: each flick of the pointer across it adds spin,
+   circle from the toggle. The domino is a toy: each flick of the pointer onto it adds spin,
    friction slows it and a spring settles it upright, and a click squashes it and pops it spinning;
    the spin carries across a page change (`domino.js`). CSS does the rest, except the theme circle,
    which `theme.js` starts. With
