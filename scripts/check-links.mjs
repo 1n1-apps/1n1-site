@@ -80,7 +80,14 @@ export function checkSite(root, siteUrl) {
   for (const page of listHtml(root)) {
     const name = relative(root, page).split(sep).join('/');
     for (const ref of extractRefs(readFileSync(page, 'utf8'))) {
-      const target = resolveTarget(root, page, ref, siteUrl);
+      let target;
+      try {
+        target = resolveTarget(root, page, ref, siteUrl);
+      } catch {
+        // decodeURIComponent refuses a bad escape such as `%zz`; that link is broken, not the run.
+        problems.push({ page: name, ref, problem: 'malformed URL' });
+        continue;
+      }
       if (!target) continue;
       if (!existsSync(target.file)) problems.push({ page: name, ref, problem: 'no such file' });
       else if (target.hash && target.file.endsWith('.html') && !ids(target.file).has(target.hash)) {

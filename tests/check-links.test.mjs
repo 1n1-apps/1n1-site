@@ -173,6 +173,15 @@ describe('checkSite', () => {
   });
 });
 
+describe('checkSite, a malformed reference', () => {
+  it('reports a malformed percent-encoding instead of crashing', () => {
+    put('index.html', '<a href="/a%zz">a</a>');
+    assert.deepEqual(checkSite(root), [
+      { page: 'index.html', ref: '/a%zz', problem: 'malformed URL' },
+    ]);
+  });
+});
+
 describe('main', () => {
   it('passes, and says how many pages it checked', () => {
     put('index.html', '<a href="/">home</a>');
