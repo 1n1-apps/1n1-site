@@ -137,7 +137,7 @@ for the release-only view. Paths below are inside the app repository.
 | Place search and naming use Android's geocoder (Google on most phones) | `src/adapters/location/ExpoLocationAdapter.ts:102,116` (`reverseGeocodeAsync` names the current place; `geocodeAsync` searches) |
 | You can type a place instead | `src/screens/Settings/settingsCopy.ts:360` ("Search for a place") |
 | Plus is bought through Google Play; Meantime learns only whether Plus is active | `src/adapters/billing/PlayBillingAdapter.ts` over the app's billing module; merged manifest: `com.android.vending.BILLING` |
-| Ads from AdMob; consent asked where the law requires it; changeable under Privacy choices; Plus removes ads | Ads PR: `package.json:26` (`react-native-google-mobile-ads` 17.2.0); `src/adapters/ads/createGoogleMobileAds.tsx:54-59` (UMP `requestInfoUpdate`, `showPrivacyOptionsForm`); `src/state/ads/AdsProvider.tsx:102` (no ad until `canRequestAds`); `src/screens/Settings/settingsCopy.ts:53` ("Privacy choices"). No non-personalised flag, so outside consent regions ads may be personalised; the policy says consent applies "where the law requires it" |
+| Ads from AdMob; where the law requires it, consent asked first and changeable under Privacy choices; Plus removes ads | Ads PR: `package.json:26` (`react-native-google-mobile-ads` 17.2.0); `src/adapters/ads/createGoogleMobileAds.tsx:54-59` (UMP `requestInfoUpdate`, `showPrivacyOptionsForm`); `src/state/ads/AdsProvider.tsx:102` (no ad until `canRequestAds`); `src/screens/Settings/settingsCopy.ts:53` ("Privacy choices"), a row shown only where UMP requires privacy options (`SettingsScreen.tsx:678`). No non-personalised flag, so outside consent regions ads may be personalised; the policy says consent applies "where the law requires it" |
 | Declining location: the app works, but no weather | Owner, 2026-10-06 |
 | Notifications, exact alarms and full-screen alerts; declining means no alarms reach the phone | `POST_NOTIFICATIONS` (merged, from `expo-notifications`; asked at `ExpoNotificationSchedulerAdapter.ts:78`); `SCHEDULE_EXACT_ALARM`, `USE_EXACT_ALARM`, `USE_FULL_SCREEN_INTENT` (the app's modules); owner, 2026-10-06 |
 | Restarting alarms after reboot, staying awake, vibrating, playing sound ask for nothing | `RECEIVE_BOOT_COMPLETED`, `WAKE_LOCK`, `VIBRATE`, `FOREGROUND_SERVICE(_MEDIA_PLAYBACK)`, `DISABLE_KEYGUARD`, `MODIFY_AUDIO_SETTINGS`: install-time, no prompt |
@@ -148,7 +148,7 @@ The merged manifest's other permissions, none of which prompts or sends anything
 | Permission | From | Prompts? | Covered by |
 | --- | --- | --- | --- |
 | `INTERNET`, `ACCESS_NETWORK_STATE`, `ACCESS_WIFI_STATE` | React Native, the ads SDK | No | The forecast, place search, purchases and ads rows |
-| `AD_ID`, `ACCESS_ADSERVICES_AD_ID`, `_ATTRIBUTION`, `_TOPICS` | The ads SDK | No | The ads row (advertising ID) |
+| `AD_ID`, `ACCESS_ADSERVICES_AD_ID`, `_ATTRIBUTION`, `_TOPICS` | The ads SDK | No | The ads row: the advertising ID, ad measurement, and interest topics Android infers on the phone (the policy's "such as" list) |
 | `BIND_GET_INSTALL_REFERRER_SERVICE` | The ads SDK | No | The ads row |
 | `c2dm.permission.RECEIVE` | `expo-notifications` (push) | No | Inert: the app has no push service configured |
 | `READ_APP_BADGE` and the launcher badge permissions | `expo-notifications` | No | Badge counts on the launcher; nothing leaves the phone |

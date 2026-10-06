@@ -57,9 +57,9 @@ wherever you choose to save or send it.
   learns whether Plus is active.
 - **Ads.** The free version shows ads from Google AdMob. Google receives what it needs to show an ad,
   such as your device's advertising ID, IP address and the ads you see and tap. Where the law requires
-  it, Google's form asks for your consent before any ad is shown, and ads are personalised only if you
-  agree. You can change your answer at any time in Meantime's settings, under Privacy choices. Meantime Plus
-  removes ads. See [how Google uses data for ads](https://policies.google.com/technologies/ads)
+  it, Google's form asks for your consent before any ad is shown, ads are personalised only if you
+  agree, and you can change your answer later in Meantime's settings, under Privacy choices. Meantime
+  Plus removes ads. See [how Google uses data for ads](https://policies.google.com/technologies/ads)
   and [Google's privacy policy](https://policies.google.com/privacy).
 
 ## Permissions
