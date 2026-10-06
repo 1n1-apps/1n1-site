@@ -19,6 +19,29 @@ export function labelFor(theme) {
 }
 
 /**
+ * Swap the theme. Where the browser can draw a view transition and motion is welcome, the new theme
+ * opens as a circle from the button (`--tx`, `--ty`); `theming` on the root folds the page's named
+ * transition parts into one, so the circle covers everything. Otherwise the theme changes at once.
+ *
+ * @param {Document} doc
+ * @param {() => void} apply
+ * @param {{ x: number, y: number }} origin
+ * @param {boolean} reduced
+ */
+export function transition(doc, apply, origin, reduced) {
+  const start = /** @type {any} */ (doc).startViewTransition;
+  if (reduced || typeof start !== 'function') {
+    apply();
+    return;
+  }
+  const root = doc.documentElement;
+  root.style.setProperty('--tx', `${origin.x}px`);
+  root.style.setProperty('--ty', `${origin.y}px`);
+  root.classList.add('theming');
+  start.call(doc, apply).finished.finally(() => root.classList.remove('theming'));
+}
+
+/**
  * @param {Document} doc
  * @param {Storage | null} storage
  */
@@ -35,7 +58,12 @@ export function setUp(doc, storage) {
   button.hidden = false;
   button.addEventListener('click', () => {
     const next = doc.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-    show(next);
+    const box = button.getBoundingClientRect?.();
+    const origin = box
+      ? { x: box.left + box.width / 2, y: box.top + box.height / 2 }
+      : { x: 0, y: 0 };
+    const reduced = !!doc.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    transition(doc, () => show(next), origin, reduced);
     try {
       storage && storage.setItem('theme', next);
     } catch {
