@@ -11,7 +11,7 @@
     "preview": "eleventy --serve --port 8080",
     "lint": "eleventy --quiet && html-validate \"_site/**/*.html\"",
     "typecheck": "node node_modules/typescript/bin/tsc -p tsconfig.json",
-    "check:links": "node scripts/check-links.mjs _site",
+    "check:links": "node scripts/check-links.mjs _site https://1n1.uk",
     "check:a11y": "node scripts/check-a11y.mjs _site",
     "deps:trust-check": "bun scripts/check-deps-trust.mjs",
     "prepare": "husky"
