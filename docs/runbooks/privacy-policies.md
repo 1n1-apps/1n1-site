@@ -58,7 +58,9 @@ store name and its repository as "the app repository", never by codename.
 - **In the app's ticket:** any change to what the app does with data, a new SDK that can make a
   request, a new permission, a new network endpoint, a change to what is stored or sent, carries a
   policy change in the same delivery: a `1n1-site` PR, linked from the app's PR, written by this
-  runbook. The app PR's `Privacy policy check` line names it, or says why nothing changed.
+  runbook. The two PRs link each other; the app PR's description names the policy PR, or says why
+  the policy needs no change. The site PR has no studio Issue, so it's opened as a direct fix with
+  the owner's own `gh` login. Its own `Privacy policy check` line cites the check.
 - **At every release of an app:** before the build goes to a store, check the policy against the
   release (its permissions, its dependencies, its data runbooks). If anything differs, the policy PR
   merges first, so the live policy is never behind the app people install.
