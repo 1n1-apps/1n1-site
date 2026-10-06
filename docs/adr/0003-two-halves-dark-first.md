@@ -50,13 +50,20 @@ The identity itself, the domino mark, the 1·n·1 wordmark in Archivo and the fu
    … how everything loads in, navigation, hover effects, and something on the logo"). Blocks rise in
    on arrival; a page change is a cross-document view transition that holds the half still; cards
    rise as they scroll in; the domino spins in and turns over on hover; the new theme opens as a
-   circle from the toggle. CSS does all of it except the theme circle, which `theme.js` starts. With
+   circle from the toggle. The domino is a toy: each flick of the pointer across it adds spin,
+   friction slows it and a spring settles it upright, and a click squashes it and pops it spinning;
+   the spin carries across a page change (`domino.js`). CSS does the rest, except the theme circle,
+   which `theme.js` starts. With
    `prefers-reduced-motion` nothing moves, and a browser without view transitions changes pages and
    themes at once. `docs/design/visual-system.md` § Motion lists each moment.
 7. **An app page has a fixed shape for every app:** heading with the store button (or the status until
    the listing is live), screenshots once released, the app's real features as cards, a panel for the
    paid tier when there is one, then details. The content file decides which parts appear; the
-   template never changes for an app (`docs/runbooks/adding-an-app.md`).
+   template never changes for an app (`docs/runbooks/adding-an-app.md`). In a list, an app's whole
+   row is its link, and the row lifts and tints under the pointer.
+8. **Every page but home starts with a back arrow** and, below the top level, the breadcrumb. The
+   arrow's link goes one level up; with scripting, a visitor who came from another page of the site
+   goes back to it instead (`back.js`).
 
 ## Alternatives considered
 
