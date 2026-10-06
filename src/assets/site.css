@@ -182,6 +182,11 @@ a:hover {
   align-self: flex-start;
 }
 
+.mkw {
+  display: block;
+  flex: none;
+}
+
 .mk {
   display: block;
   flex: none;
@@ -308,27 +313,11 @@ a:hover {
 
 .app {
   position: relative;
-  isolation: isolate;
   display: flex;
   gap: var(--space-4);
   align-items: flex-start;
   padding-block: var(--space-5);
   border-top: 2px solid var(--text);
-}
-
-/* The hover surface, a little wider than the row so the icon and text sit inside it. */
-.app::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  inset: var(--space-2) calc(-1 * var(--space-4));
-  border-radius: var(--card);
-  background: var(--line);
-  opacity: 0;
-}
-
-.app:hover::before {
-  opacity: 0.55;
 }
 
 /* The app's name is the row's link, and its hit area is the whole row. */
@@ -788,9 +777,9 @@ a:hover {
     font-size: var(--step-4);
   }
 
+  /* The same size on every page, so the half doesn't change as you move between pages. */
   .half.inner .hl {
     display: block;
-    font-size: var(--step-3);
   }
 
   .half.inner .mail {
@@ -909,30 +898,41 @@ a:hover {
 
   :root.arrived .half .top > *,
   :root.arrived .half .mail,
-  :root.arrived .mk {
+  :root.arrived .mkw {
     animation: none;
   }
 
   /* The domino: it spins in on arrival, and turns over whenever the logo is pointed at. */
-  .mk {
+  .mkw {
     animation: domino-in 900ms var(--spring) 120ms both;
   }
 
   /* domino.js turns it (the `rotate` property); hover grows it quickly and lets go slowly, and a
      press squashes it before it pops back up. */
-  .mk {
+  .mkw {
     transition: scale 900ms var(--ease);
   }
 
-  .brand:hover .mk,
-  .brand:focus-visible .mk {
+  .brand:hover .mkw,
+  .brand:focus-visible .mkw {
     scale: 1.14;
-    transition: scale 260ms var(--spring);
+    transition: scale 260ms cubic-bezier(0.3, 1.3, 0.6, 1);
   }
 
-  .brand.pressed .mk {
-    scale: 0.78;
+  .brand.pressed .mkw {
+    scale: 0.8;
     transition: scale 90ms ease-out;
+  }
+
+  /* The wordmark steps aside while the domino turns, and drifts back once it rests. */
+  .wm {
+    transition: translate 900ms var(--ease);
+  }
+
+  .brand:hover .wm,
+  .brand.spinning .wm {
+    translate: 0.28em 0;
+    transition-duration: 300ms;
   }
 
   .brand {
@@ -981,17 +981,6 @@ a:hover {
   .app:hover .appicon,
   .app:has(h3 a:focus-visible, .h3 a:focus-visible) .appicon {
     transform: rotate(-6deg) scale(1.06);
-  }
-
-  .app,
-  .app::before {
-    transition:
-      transform 300ms var(--ease),
-      opacity 300ms var(--ease);
-  }
-
-  .app:hover {
-    transform: translateY(-3px);
   }
 
   .back svg {
