@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% if title %}{{ title }} · {% endif %}1n1</title>
 <meta name="description" content="{{ description or site.description }}">
-<link rel="canonical" href="{{ site.url }}{{ page.url }}">
+{% if noindex %}<meta name="robots" content="noindex">{% else %}<link rel="canonical" href="{{ site.url }}{{ page.url }}">{% endif %}
 <meta property="og:title" content="{% if title %}{{ title }} · {% endif %}1n1">
 <meta property="og:description" content="{{ description or site.description }}">
-<meta property="og:url" content="{{ site.url }}{{ page.url }}">
+{% if not noindex %}<meta property="og:url" content="{{ site.url }}{{ page.url }}">{% endif %}
 <meta property="og:image" content="{{ site.url }}/assets/brand/share-card.png">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
