@@ -175,7 +175,7 @@ runs again before the first submission.
 | Risk | Blast radius | Mitigation |
 | --- | --- | --- |
 | The policy drifts from the app | A store rejection or a false statement | The factory rule in `deliver-app-issue` (PR #70) and the release check |
-| The policy goes live before the ads PR merges | None while no build is on a store | The first-release check in `privacy-policies.md` (§ Ads and the release above) |
+| The policy goes live before the ads PR merges | Resolved: #417 merged on 2026-10-06 | The first-release check in `privacy-policies.md` still runs before submission |
 | `check:a11y` needs Chrome | CI fails on a runner without it | `ubuntu-latest` ships Chrome; `CHROME_PATH` overrides |
 
 ## Out of scope
@@ -187,4 +187,32 @@ runs again before the first submission.
 
 ## Delivered
 
-<Added at reconciliation, before the PR opens.>
+| # | Criterion | Status | Where |
+| --- | --- | --- | --- |
+| 1 | Recorded decision on tooling and deploy | ✅ | ADR 0002 (accepted) |
+| 2 | Pages on the custom domain, HTTPS enforced, domain verified on the org | ✅ | Owner set 2026-10-06; read back through the API and DNS; `1n1-studio/records/github-pages.md`, `records/domain.md` (1n1-studio #18) |
+| 3 | Branch protection in both repositories, matching the factory's | ✅ | A `main` ruleset on every repository, 2026-10-06; factory-control #71 records them |
+| 4 | Home, apps list, app page, contact, a policy per app at `/privacy/meantime` | ✅ | `src/`; 7 pages built |
+| 5 | Built from the signed board, with E1-A1's exports and voice | ✅ | Direction A; exports from studio `2494778` |
+| 6 | Phone width, light and dark, automated accessibility check | ✅ | `check:a11y`: 7 pages × 2 themes × 2 widths, at rest, no serious findings |
+| 7 | Favicons and share cards from the generator | ✅ | `docs/runbooks/brand-exports.md` |
+| 8 | The Meantime policy matches the app | ✅ | § Privacy-policy check; ads PR (#417) merged since, so the ads paragraph describes `main` |
+| 9 | README on adding an app and updating a policy | ✅ | `README.md` |
+| 10 | Owner-approved page copy in `1n1-studio/copy/` | ✅ | `copy/website.md`: approved 2026-10-06 (1n1-studio #18); the browser-review round's strings in the studio PR that accompanies this one |
+| 11 | Commands documented; `ci.yml` calls build, lint, typecheck, check:links, check:a11y | ✅ | `AGENTS.md`, `docs/runbooks/deploy.md`, `ci.yml` |
+| 12 | `adding-an-app.md` completed; the owner decides on skills | ✅ | Runbook complete, with § At release; owner, 2026-10-06: the procedures stay runbooks (factory-control #70, `skills/README.md`) |
+| 13 | Clones renamed `1n1-studio/`, `1n1-site/`; router updated | ✅ | Owner renamed the folders 2026-10-06; worktrees repaired; router line 13 updated |
+| 14 | `github-org-and-tokens.md` names the 1n1 repositories | ✅ | factory-control #70 (merged) |
+
+- **Plan deviations:**
+  - The browser review (2026-10-06) added these, all recorded in ADR 0003 decisions 6–8 and `docs/design/visual-system.md`:
+    - motion: arrivals, page transitions, hovers, the domino toy, the theme circle;
+    - the app page's fixed shape: screenshots at release, selling-point features, the paid-tier panel;
+    - clickable app rows and a back arrow.
+  - The review also found that the first features undersold the app and misnamed Plans (a Plus feature); they were rewritten from the app's guide.
+  - Two scripts joined `theme.js`: `domino.js` and `back.js`, each unit-tested at 100 % of functions.
+  - `check:a11y` audits at rest with motion reduced.
+- **ADR reconciled:** ADR 0002 and ADR 0003 (decisions 1–8) match what was built; both `accepted`.
+- **Evidence captured:** 28 screenshots in `docs/evidence/issue-7-website/`, every page at 390 px and 1440 px in both themes, from the final build at rest.
+- **Release follow-up:** E16-T4 (app-dayweave #308) carries a note sending the release to `adding-an-app.md` § At release; the store checklist gains the same step (template-app #34, app-dayweave #420).
+- **Nothing deferred:** every criterion is met.
