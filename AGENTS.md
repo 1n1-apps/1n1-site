@@ -75,7 +75,9 @@ This contract selects the procedure; it does not replace the skill.
   this repository. The wrapper reads only the factory-issued, ignored, expiring `.env.agent.local`
   token. If it is absent or expired, reissue it from `factory-control`
   (`bun scripts/issue-app-agent-token.mjs 1n1-site <issue-number>`) and replace only the ignored
-  worktree copy; never configure GitHub credentials directly.
+  worktree copy; never configure GitHub credentials directly. One exception: a privacy-policy PR that
+  an app ticket drives has no studio Issue to issue a token for, so it is opened with the owner's own
+  `gh` login (`docs/runbooks/privacy-policies.md` § Changing a policy).
 
 ## Content rules
 
