@@ -1,0 +1,25 @@
+---
+layout: base.njk
+section: apps
+---
+<p class="crumb"><a href="/apps/">Apps</a> / {{ name }}</p>
+<section class="apphero">
+<img class="appicon" src="{{ icon }}" alt="" width="88" height="88">
+<div>
+<h1>{{ name }}</h1>
+<p class="line">{{ line }}</p>
+{% if store %}<p class="cta"><a class="btn" href="{{ store }}">Get {{ name }} on Google Play</a></p>{% else %}<p class="cta"><span class="status">{{ status }}</span></p>{% endif %}
+</div>
+</section>
+<section aria-labelledby="what">
+<h2 id="what">What it does</h2>
+<ul class="feat">
+{% for f in features %}<li><h3>{{ f.title }}</h3><p>{{ f.text }}</p></li>
+{% endfor %}</ul>
+</section>
+<section aria-labelledby="details">
+<h2 id="details">Details</h2>
+<dl class="meta">
+{% for d in details %}<dt>{{ d.term }}</dt><dd>{{ d.text | safe }}</dd>
+{% endfor %}</dl>
+</section>
