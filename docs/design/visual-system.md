@@ -49,8 +49,8 @@ moves:
 | Arriving | each block in the content, and on a fresh visit the half, rises 16 px into place in turn, 70 ms apart |
 | Changing page | a cross-document view transition: the half holds still, the content cross-fades |
 | Scrolling | cards and Plus items rise as they enter the window (scroll-driven, where supported) |
-| The domino | spins in on arrival; each pointer flick adds spin, friction slows it and it settles upright; a click squashes it and pops it spinning; hover grows it, and the growth fades slowly (`domino.js`) |
-| Pointer | cards take the accent border and their pip grows; an app row (all of it a link) lifts and tints and its icon tilts; the button lifts onto an accent shadow; the back arrow nudges left; link underlines settle lower |
+| The domino | spins in on arrival; each pointer flick on or off adds spin (one is a full turn), friction slows it and it settles forward on the next upright side, never turning back; it grows with its speed; a click squashes it and pops it spinning; hover grows it, and the growth fades slowly; the wordmark steps aside while it turns (`domino.js`) |
+| Pointer | cards take the accent border and their pip grows; an app row (all of it a link) underlines its name and tilts its icon; the button lifts onto an accent shadow; the back arrow nudges left; link underlines settle lower |
 | Theme | the new theme opens as a circle from the toggle (view transition), and the icon morphs |
 
 All of it sits in `@media (prefers-reduced-motion: no-preference)`: with reduced motion nothing moves,

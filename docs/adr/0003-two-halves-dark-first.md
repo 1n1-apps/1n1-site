@@ -60,7 +60,7 @@ The identity itself, the domino mark, the 1·n·1 wordmark in Archivo and the fu
    the listing is live), screenshots once released, the app's real features as cards, a panel for the
    paid tier when there is one, then details. The content file decides which parts appear; the
    template never changes for an app (`docs/runbooks/adding-an-app.md`). In a list, an app's whole
-   row is its link, and the row lifts and tints under the pointer.
+   row is its link; under the pointer its name underlines and its icon tilts.
 8. **Every page but home starts with a back arrow** and, below the top level, the breadcrumb. The
    arrow's link goes one level up; with scripting, a visitor who came from another page of the site
    goes back to it instead (`back.js`).
