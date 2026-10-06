@@ -1,0 +1,12 @@
+---
+layout: base.njk
+title: Privacy policies
+section: privacy
+permalink: /privacy/
+description: Each 1n1 app's privacy policy.
+---
+<h1>Privacy policies</h1>
+<p>Each app has its own policy.</p>
+<ul class="plain">
+{% for p in collections.policies %}<li><a href="{{ p.url }}">{{ p.data.app }}</a></li>
+{% endfor %}</ul>
