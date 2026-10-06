@@ -181,6 +181,11 @@ the time-box, inspect the log and the process rather than waiting longer.
   never in the primary checkout. A junction may exist at `1n1-apps\.worktrees\1n1-site-<issue>` so
   the owner can open mid-ticket documents; it is for reading, never for running commands.
 - Branch `feature/<issue>-<slug>` from current `origin/main`. Pull requests target `main`.
+- `main` is protected by a ruleset: a pull request with the owner's approval, the CI job `verify`
+  passing, no direct push or force push. A required check is matched by its job name, so a change
+  that renames, adds or removes a CI job says so in its PR description: the owner updates the
+  ruleset when merging it, or every later PR waits on a check that never reports
+  (`factory-control/docs/runbooks/github-org-and-tokens.md` § Protect `main`).
 - Commit subjects are exactly `type: summary` — one of `feat`, `fix`, `docs`, `style`, `refactor`,
   `perf`, `test`, `build`, `ci`, `chore`, `revert`. Never add a scope. `commit` has the full rules.
 - Make many small commits: each one logical change, independently reviewable, green.
