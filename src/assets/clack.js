@@ -1,6 +1,7 @@
 // @ts-check
 // The domino's clack (ADR 0003 decision 6), by modal synthesis: a struck plastic tile rings at a few
-// high, inharmonic frequencies that die away within tens of milliseconds, the higher ones first. A
+// inharmonic frequencies that plastic damps within a few milliseconds, the higher ones first. A long,
+// high, pure ring is glass; plastic is short, duller and a little rough. A
 // sub-millisecond tick of bright noise is the strike itself; the ringing partials are what make it a
 // clack. Filtered noise alone sounds like a hand clap, and a low or sliding tone like a bloop. Every
 // clack draws its own pitch, ring and loudness, and sometimes a quieter second tap, so no two sound
@@ -22,16 +23,18 @@ const RATIOS = [1, 1.47, 2.23, 2.71, 3.38];
  * @param {() => number} random
  */
 export function clack(random) {
-  const base = between(random, 1700, 2500);
-  const ring = between(random, 0.028, 0.045);
+  const base = between(random, 1000, 1600);
+  const ring = between(random, 0.009, 0.015);
   return {
     modes: RATIOS.map((ratio, i) => ({
       freq: base * ratio * between(random, 0.985, 1.015),
       level: between(random, 0.75, 1) / (1 + i * 0.6),
-      decay: ring / (1 + i * 0.55),
+      decay: ring / (1 + i * 0.9),
     })),
     gain: between(random, 0.12, 0.24),
     tick: between(random, 0.5, 1),
+    rough: between(random, 0.15, 0.35),
+    dull: between(random, 4500, 6500),
   };
 }
 
@@ -73,9 +76,13 @@ export function play() {
     if (voices >= MAX_VOICES) return;
     voices++;
     const start = audio.currentTime + hit.at;
+    // Everything passes a low-pass: plastic has none of glass's sparkle on top.
     const out = audio.createGain();
     out.gain.value = hit.gain;
-    out.connect(audio.destination);
+    const dull = audio.createBiquadFilter();
+    dull.type = 'lowpass';
+    dull.frequency.value = hit.dull;
+    out.connect(dull).connect(audio.destination);
 
     // The strike: under a millisecond of noise, high-passed so it ticks rather than thumps.
     const strike = audio.createBufferSource();
@@ -89,6 +96,21 @@ export function play() {
     strike.connect(bright).connect(strikeGain).connect(out);
     strike.start(start);
     strike.stop(start + 0.004);
+
+    // The roughness: a little band of noise around the base, damped like the ring, so the partials
+    // don't sound pure.
+    const grit = audio.createBufferSource();
+    grit.buffer = noise;
+    const gritBand = audio.createBiquadFilter();
+    gritBand.type = 'bandpass';
+    gritBand.frequency.value = hit.modes[0].freq * 1.6;
+    gritBand.Q.value = 1.2;
+    const gritGain = audio.createGain();
+    gritGain.gain.setValueAtTime(hit.rough, start);
+    gritGain.gain.setTargetAtTime(0, start, hit.modes[0].decay * 0.8);
+    grit.connect(gritBand).connect(gritGain).connect(out);
+    grit.start(start);
+    grit.stop(start + 0.06);
 
     // The tile ringing: each partial starts at once and dies exponentially.
     let longest = 0;

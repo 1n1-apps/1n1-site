@@ -13,12 +13,12 @@ function seeded(seed) {
 }
 
 describe('clack', () => {
-  it('is a struck plastic tile: a few high, inharmonic partials that ring briefly', () => {
+  it('is a struck plastic tile: a few inharmonic partials, damped fast, dulled, a little rough', () => {
     const random = seeded(7);
     for (let i = 0; i < 500; i++) {
       const c = clack(random);
       assert.equal(c.modes.length, 5);
-      assert.ok(c.modes[0].freq >= 1650 && c.modes[0].freq <= 2600, `base ${c.modes[0].freq}`);
+      assert.ok(c.modes[0].freq >= 950 && c.modes[0].freq <= 1650, `base ${c.modes[0].freq}`);
       for (let m = 1; m < c.modes.length; m++) {
         const ratio = c.modes[m].freq / c.modes[0].freq;
         assert.ok(Math.abs(ratio - Math.round(ratio)) > 0.04, `harmonic ratio ${ratio}`);
@@ -26,11 +26,13 @@ describe('clack', () => {
         assert.ok(c.modes[m].decay < c.modes[m - 1].decay, 'higher modes die first');
       }
       for (const mode of c.modes) {
-        assert.ok(mode.decay >= 0.005 && mode.decay <= 0.05, `decay ${mode.decay}`);
+        assert.ok(mode.decay >= 0.0015 && mode.decay <= 0.016, `decay ${mode.decay}`);
         assert.ok(mode.level > 0 && mode.level <= 1);
       }
       assert.ok(c.gain >= 0.12 && c.gain <= 0.24, `gain ${c.gain}`);
       assert.ok(c.tick >= 0.5 && c.tick <= 1, `tick ${c.tick}`);
+      assert.ok(c.rough >= 0.15 && c.rough <= 0.35, `rough ${c.rough}`);
+      assert.ok(c.dull >= 4500 && c.dull <= 6500, `dull ${c.dull}`);
     }
   });
 
