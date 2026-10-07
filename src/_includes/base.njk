@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{% if title %}{{ title }} · {% endif %}1n1</title>
+<title>{% if title %}{{ title }} · {% endif %}{{ site.name }}</title>
 <meta name="description" content="{{ description or site.description }}">
 {% if noindex %}<meta name="robots" content="noindex">{% else %}<link rel="canonical" href="{{ site.url }}{{ page.url }}">{% endif %}
-<meta property="og:title" content="{% if title %}{{ title }} · {% endif %}1n1">
+<meta property="og:title" content="{% if title %}{{ title }} · {% endif %}{{ site.name }}">
 <meta property="og:description" content="{{ description or site.description }}">
 {% if not noindex %}<meta property="og:url" content="{{ site.url }}{{ page.url }}">{% endif %}
 <meta property="og:image" content="{{ site.url }}/assets/brand/share-card.png">
@@ -57,7 +57,7 @@
 {% endif %}{{ content | safe }}
 </main>
 <footer class="ft">
-<p>© 2026 1n1</p>
+<p>© 2026 {{ site.name }}</p>
 <p><a href="/privacy/">Privacy policies</a></p>
 <p><a href="mailto:{{ site.email }}">{{ site.email }}</a></p>
 </footer>
