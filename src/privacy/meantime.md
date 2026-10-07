@@ -6,7 +6,7 @@ permalink: /privacy/meantime/
 title: Meantime privacy policy
 description: What Meantime does with your data, in plain words.
 app: Meantime
-effective: 2026-10-06
+effective: 2026-10-07
 summary:
   - what: Your plans, alarms, logs and settings
     where: Stays on your phone
@@ -55,8 +55,10 @@ wherever you choose to save or send it.
   being looked up.
 - **Purchases.** Meantime Plus is bought through Google Play, which handles the payment. Meantime only
   learns whether Plus is active.
-- **Ads.** The free version shows ads from Google AdMob. Google receives what it needs to show an ad,
-  such as your device's advertising ID, IP address and the ads you see and tap. Where the law requires
+- **Ads.** The free version shows ads from Google AdMob. Google's ads software in Meantime collects
+  your device's advertising ID, your IP address, information about your device and the app, and the
+  ads you see and tap. Meantime passes Google nothing of its own: none of your plans, logs or anything
+  you've written. Where the law requires
   it, Google's form asks for your consent before any ad is shown, ads are personalised only if you
   agree, and you can change your answer later in Meantime's settings, under Privacy choices. Meantime
   Plus removes ads. See [how Google uses data for ads](https://policies.google.com/technologies/ads)
