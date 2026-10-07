@@ -64,7 +64,13 @@ describe('the Eleventy configuration', () => {
     assert.equal(e.calls.filters.longDate('2026-10-06'), '6 October 2026');
     assert.equal(e.calls.filters.isoDate('2026-10-06'), '2026-10-06');
     assert.deepEqual(e.calls.ignores, ['src/assets/**/*.md']);
-    assert.equal(e.calls.passthrough.length, 3);
+    assert.equal(e.calls.passthrough.length, 4);
+  });
+
+  it('copies app-ads.txt to the root of the site, where AdMob looks for it', () => {
+    const e = fakeEleventy();
+    configure(e);
+    assert.ok(e.calls.passthrough.includes('src/app-ads.txt'));
   });
 
   it('orders the apps and the policies by their front matter', () => {
