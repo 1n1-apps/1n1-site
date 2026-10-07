@@ -1,6 +1,6 @@
 // @ts-check
-// The domino's clack (ADR 0003 decision 6): a short burst of noise through a narrow band-pass, for
-// the tile's edge, over a small wooden tock. Every clack draws its own pitch, brightness, loudness and
+// The domino's clack (ADR 0003 decision 6): a burst of bright noise a few milliseconds long, for the
+// tile's edge, with a high, barely pitched tick under it. Anything longer or lower reads as a bloop. Every clack draws its own pitch, brightness, loudness and
 // length, and sometimes a quieter second tap, so no two sound the same. A cap on voices keeps rapid
 // clicking a clatter rather than a roar. Synthesised in the browser: there is no sound file.
 
@@ -16,11 +16,11 @@ const between = (random, low, high) => low + random() * (high - low);
  */
 export function clack(random) {
   return {
-    filter: between(random, 1800, 3400),
-    q: between(random, 4, 9),
-    tone: between(random, 300, 520),
-    gain: between(random, 0.18, 0.32),
-    decay: between(random, 0.03, 0.07),
+    filter: between(random, 2500, 6000),
+    q: between(random, 1.5, 4),
+    tone: between(random, 1400, 2600),
+    gain: between(random, 0.25, 0.45),
+    decay: between(random, 0.004, 0.014),
   };
 }
 
@@ -72,18 +72,17 @@ export function play() {
     band.Q.value = hit.q;
     const edgeGain = audio.createGain();
     edgeGain.gain.setValueAtTime(0.0001, start);
-    edgeGain.gain.exponentialRampToValueAtTime(hit.gain, start + 0.002);
+    edgeGain.gain.exponentialRampToValueAtTime(hit.gain, start + 0.0005);
     edgeGain.gain.exponentialRampToValueAtTime(0.0001, start + hit.decay);
     edge.connect(band).connect(edgeGain).connect(audio.destination);
 
     const body = audio.createOscillator();
-    body.type = 'triangle';
-    body.frequency.setValueAtTime(hit.tone, start);
-    body.frequency.exponentialRampToValueAtTime(hit.tone * 0.7, start + hit.decay);
+    body.type = 'sine';
+    body.frequency.value = hit.tone;
     const bodyGain = audio.createGain();
     bodyGain.gain.setValueAtTime(0.0001, start);
-    bodyGain.gain.exponentialRampToValueAtTime(hit.gain * 0.6, start + 0.003);
-    bodyGain.gain.exponentialRampToValueAtTime(0.0001, start + hit.decay * 1.4);
+    bodyGain.gain.exponentialRampToValueAtTime(hit.gain * 0.3, start + 0.0005);
+    bodyGain.gain.exponentialRampToValueAtTime(0.0001, start + hit.decay * 0.6);
     body.connect(bodyGain).connect(audio.destination);
 
     edge.start(start);

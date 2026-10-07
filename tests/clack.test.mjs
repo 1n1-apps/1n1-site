@@ -13,15 +13,15 @@ function seeded(seed) {
 }
 
 describe('clack', () => {
-  it('stays inside a wooden, short, quiet range', () => {
+  it('is a click, not a note: very short, bright, and barely pitched', () => {
     const random = seeded(7);
     for (let i = 0; i < 500; i++) {
       const c = clack(random);
-      assert.ok(c.filter >= 1800 && c.filter <= 3400, `filter ${c.filter}`);
-      assert.ok(c.q >= 4 && c.q <= 9, `q ${c.q}`);
-      assert.ok(c.tone >= 300 && c.tone <= 520, `tone ${c.tone}`);
-      assert.ok(c.gain >= 0.18 && c.gain <= 0.32, `gain ${c.gain}`);
-      assert.ok(c.decay >= 0.03 && c.decay <= 0.07, `decay ${c.decay}`);
+      assert.ok(c.filter >= 2500 && c.filter <= 6000, `filter ${c.filter}`);
+      assert.ok(c.q >= 1.5 && c.q <= 4, `q ${c.q}`);
+      assert.ok(c.tone >= 1400 && c.tone <= 2600, `tone ${c.tone}`);
+      assert.ok(c.gain >= 0.25 && c.gain <= 0.45, `gain ${c.gain}`);
+      assert.ok(c.decay >= 0.004 && c.decay <= 0.014, `decay ${c.decay}`);
     }
   });
 
