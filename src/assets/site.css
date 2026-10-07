@@ -966,10 +966,6 @@ a:hover {
       color 200ms var(--ease);
   }
 
-  .clicks:hover {
-    transform: translateY(-0.05em);
-  }
-
   .clicks:active {
     transform: scale(0.92);
     transition-duration: 90ms;
