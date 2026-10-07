@@ -57,6 +57,8 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ 'src/assets': 'assets' });
   eleventyConfig.addPassthroughCopy('src/favicon.ico');
   eleventyConfig.addPassthroughCopy('src/apple-touch-icon.png');
+  // AdMob reads the authorised-seller file from the domain root (1n1-studio E2-T2, #16).
+  eleventyConfig.addPassthroughCopy('src/app-ads.txt');
 
   // The apps, in the order their front matter gives.
   eleventyConfig.addCollection('apps', (api) =>
