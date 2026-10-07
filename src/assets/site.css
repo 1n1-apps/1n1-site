@@ -204,7 +204,28 @@ a:hover {
 }
 
 .wm i {
+  display: inline-block;
   font-style: normal;
+  color: var(--accent);
+}
+
+/* "clicks" in the line is a button: it presses the domino (domino.js). A row of the domino's pips
+   underlines it. */
+.clicks {
+  display: inline-block;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: underline dotted var(--accent);
+  text-decoration-thickness: 0.09em;
+  text-underline-offset: 0.12em;
+}
+
+.clicks:hover {
   color: var(--accent);
 }
 
@@ -937,6 +958,21 @@ a:hover {
 
   .brand {
     cursor: pointer;
+  }
+
+  .clicks {
+    transition:
+      transform 320ms var(--spring),
+      color 200ms var(--ease);
+  }
+
+  .clicks:hover {
+    transform: translateY(-0.05em) rotate(-3deg);
+  }
+
+  .clicks:active {
+    transform: scale(0.92);
+    transition-duration: 90ms;
   }
 
   /* Cards and rows answer the pointer. */

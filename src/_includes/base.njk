@@ -37,7 +37,7 @@
 <header class="half{% if not home %} inner{% endif %}">
 <div class="top">
 <a class="brand" href="/"><span class="mkw">{% mark %}</span><span class="wm">1<i aria-hidden="true">·</i>n<i aria-hidden="true">·</i>1</span></a>
-{% if home %}<h1 class="hl">{{ site.lead }}</h1>{% else %}<p class="hl">{{ site.lead }}</p>{% endif %}
+{% set lead = site.lead | replace("clicks", '<button type="button" class="clicks">clicks</button>') %}{% if home %}<h1 class="hl">{{ lead | safe }}</h1>{% else %}<p class="hl">{{ lead | safe }}</p>{% endif %}
 <nav aria-label="Site">
 <ul>
 <li><a href="/apps/"{% if section == 'apps' %} aria-current="page"{% endif %}>Apps</a></li>
