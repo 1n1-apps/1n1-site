@@ -18,7 +18,7 @@ product and user impact, not effort.
 ### F1 — <short title>
 
 - **Type:** missed feature / missed logic / missed persistence / deferred-never-done / unactioned bug /
-  undocumented decision / documentation contradiction / unaccepted ADR / product drift
+  undocumented decision / documentation contradiction / unaccepted ADR / open epic / product drift
 - **Severity:** high / medium / low
 - **Evidence:** <the ticket, PR, file, screenshot, or doc that shows it — cite paths and #numbers>
 - **What was supposed to happen:** <the acceptance criterion, ADR clause, or product statement>
@@ -59,12 +59,12 @@ Open and planned tickets checked against the app as it exists now.
 ## Actions
 
 Every finding and proposal resolves to exactly one row. Titles follow the ticket contract:
-`E<n>-<S\|T\|B\|A><n>: <description>`, parented to an epic, next unused identifier.
+`E<n>-<F\|T\|B\|A><n>: <description>`, parented to an epic, next unused identifier.
 
 | # | Action | Type | Title | Epic | From |
 | --- | --- | --- | --- | --- | --- |
 | 1 | create | Bug | `E3-B2: ...` | #10 | F1 |
-| 2 | amend | Story | #<n> | #<n> | F3 |
+| 2 | amend | Feature | #<n> | #<n> | F3 |
 | 3 | close | — | #<n> | — | reconciliation |
 
 **Validation:** `bun scripts/check-tickets.mjs <slug>` passes against the proposed set.
