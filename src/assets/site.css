@@ -967,7 +967,7 @@ a:hover {
   }
 
   .clicks:hover {
-    transform: translateY(-0.05em) rotate(-3deg);
+    transform: translateY(-0.05em);
   }
 
   .clicks:active {
