@@ -4,6 +4,8 @@
 // A click presses it down and pops it up spinning hard. The spin is saved as the page is left, so it
 // carries on across a page change. With reduced motion none of this runs.
 
+import { play } from './clack.js';
+
 /** Degrees per second a flick adds: one flick is enough for a full turn. */
 export const FLICK = 420;
 /** Degrees per second a click adds. */
@@ -108,11 +110,15 @@ export function load(storage) {
 
 /* node:coverage disable */
 // The browser wiring: events and the animation frame. The physics above is what the tests cover.
+// The logo and the word "clicks" in the line are one trigger: a press squashes the domino and plays
+// its clack (clack.js); the release pops it spinning and the wordmark's two dots hop in turn. With
+// reduced motion the sound still plays and nothing moves.
 if (typeof document !== 'undefined') {
   const brand = /** @type {HTMLAnchorElement | null} */ (document.querySelector('.brand'));
   const mark = /** @type {SVGElement | null} */ (brand && brand.querySelector('.mk'));
-  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (brand && mark && !still) {
+  if (brand && mark) {
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const dots = /** @type {HTMLElement[]} */ ([...brand.querySelectorAll('.wm i')]);
     let storage = null;
     try {
       storage = window.sessionStorage;
@@ -137,28 +143,61 @@ if (typeof document !== 'undefined') {
       } else requestAnimationFrame(frame);
     };
     const run = () => {
+      if (still) return;
       brand.classList.add('spinning');
       if (running) return;
       running = true;
       last = performance.now();
       requestAnimationFrame(frame);
     };
-    draw();
-    if (!settled(spin)) run();
-
-    brand.addEventListener('pointerenter', (event) => {
-      flick(spin, event.movementX < 0 ? -1 : 1);
-      run();
-    });
-    brand.addEventListener('pointerdown', () => brand.classList.add('pressed'));
+    const hop = () => {
+      if (still) return;
+      dots.forEach((dot, i) =>
+        dot.animate(
+          [
+            { transform: 'translateY(0)' },
+            { transform: 'translateY(-0.45em)', offset: 0.4 },
+            { transform: 'translateY(0)' },
+          ],
+          { duration: 420, delay: i * 110, easing: 'cubic-bezier(0.3, 0.7, 0.4, 1)' },
+        ),
+      );
+    };
+    const press = () => {
+      brand.classList.add('pressed');
+      play();
+    };
     const release = () => brand.classList.remove('pressed');
-    brand.addEventListener('pointerleave', release);
-    brand.addEventListener('pointercancel', release);
-    brand.addEventListener('pointerup', () => {
+    const launch = () => {
       release();
+      hop();
+      if (still) return;
       pop(spin);
       run();
-    });
+    };
+
+    if (!still) {
+      draw();
+      if (!settled(spin)) run();
+      brand.addEventListener('pointerenter', (event) => {
+        flick(spin, event.movementX < 0 ? -1 : 1);
+        run();
+      });
+    }
+    for (const target of [brand, ...document.querySelectorAll('.clicks')]) {
+      target.addEventListener('pointerdown', press);
+      target.addEventListener('pointerup', launch);
+      target.addEventListener('pointerleave', release);
+      target.addEventListener('pointercancel', release);
+    }
+    // A keyboard press of "clicks" has no pointer: play the whole press and release.
+    for (const word of document.querySelectorAll('.clicks')) {
+      word.addEventListener('click', (event) => {
+        if (/** @type {MouseEvent} */ (event).detail !== 0) return;
+        press();
+        setTimeout(launch, 90);
+      });
+    }
     // On the home page the logo already points here: spin instead of reloading.
     brand.addEventListener('click', (event) => {
       if (new URL(brand.href).pathname === location.pathname) event.preventDefault();

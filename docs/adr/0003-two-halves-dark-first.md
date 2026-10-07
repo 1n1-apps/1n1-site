@@ -31,7 +31,7 @@ The identity itself, the domino mark, the 1·n·1 wordmark in Archivo and the fu
 ## Decision
 
 1. **Two halves.** From 760 px wide, the page is a grid of 5 : 8 px : 7. The left half holds the
-   mark and wordmark, the line "Pocket-sized software made for humans." (the home page's `h1`, a
+   mark and wordmark, the line "Pocket-sized software that clicks." (owner, 2026-10-07; its word "clicks" is a button that presses the domino) (the home page's `h1`, a
    paragraph elsewhere), the navigation and the contact address; it stays in view while the right
    half scrolls. The 8 px column between them is the domino's divider, in the page ground. Below
    760 px the half becomes a top block and inner pages show only the mark and navigation there.
@@ -52,9 +52,12 @@ The identity itself, the domino mark, the 1·n·1 wordmark in Archivo and the fu
    rise as they scroll in; the domino spins in and turns over on hover; the new theme opens as a
    circle from the toggle. The domino is a toy: each flick of the pointer onto it adds spin,
    friction slows it and a spring settles it upright, and a click squashes it and pops it spinning;
-   the spin carries across a page change (`domino.js`). CSS does the rest, except the theme circle,
-   which `theme.js` starts. With
-   `prefers-reduced-motion` nothing moves, and a browser without view transitions changes pages and
+   the spin carries across a page change (`domino.js`). A press also plays a clack and hops the
+   wordmark's two dots in turn; the word "clicks" in the line is the same trigger. The clack is
+   synthesised in the browser by modal synthesis, with no sound file: a sub-millisecond strike over
+   five inharmonic partials that ring for 15–24 ms, varied on every click (`clack.js`). CSS does the
+   rest, except the theme circle, which `theme.js` starts. With `prefers-reduced-motion` nothing
+   moves, though the clack still sounds, and a browser without view transitions changes pages and
    themes at once. `docs/design/visual-system.md` § Motion lists each moment.
 7. **An app page has a fixed shape for every app:** heading with the store button (or the status until
    the listing is live), screenshots once released, the app's real features as cards, a panel for the
