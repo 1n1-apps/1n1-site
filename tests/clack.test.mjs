@@ -13,15 +13,24 @@ function seeded(seed) {
 }
 
 describe('clack', () => {
-  it('is a click, not a note: very short, bright, and barely pitched', () => {
+  it('is a struck plastic tile: a few high, inharmonic partials that ring briefly', () => {
     const random = seeded(7);
     for (let i = 0; i < 500; i++) {
       const c = clack(random);
-      assert.ok(c.filter >= 2500 && c.filter <= 6000, `filter ${c.filter}`);
-      assert.ok(c.q >= 1.5 && c.q <= 4, `q ${c.q}`);
-      assert.ok(c.tone >= 1400 && c.tone <= 2600, `tone ${c.tone}`);
-      assert.ok(c.gain >= 0.25 && c.gain <= 0.45, `gain ${c.gain}`);
-      assert.ok(c.decay >= 0.004 && c.decay <= 0.014, `decay ${c.decay}`);
+      assert.equal(c.modes.length, 5);
+      assert.ok(c.modes[0].freq >= 1650 && c.modes[0].freq <= 2600, `base ${c.modes[0].freq}`);
+      for (let m = 1; m < c.modes.length; m++) {
+        const ratio = c.modes[m].freq / c.modes[0].freq;
+        assert.ok(Math.abs(ratio - Math.round(ratio)) > 0.04, `harmonic ratio ${ratio}`);
+        assert.ok(c.modes[m].freq > c.modes[m - 1].freq);
+        assert.ok(c.modes[m].decay < c.modes[m - 1].decay, 'higher modes die first');
+      }
+      for (const mode of c.modes) {
+        assert.ok(mode.decay >= 0.005 && mode.decay <= 0.05, `decay ${mode.decay}`);
+        assert.ok(mode.level > 0 && mode.level <= 1);
+      }
+      assert.ok(c.gain >= 0.12 && c.gain <= 0.24, `gain ${c.gain}`);
+      assert.ok(c.tick >= 0.5 && c.tick <= 1, `tick ${c.tick}`);
     }
   });
 

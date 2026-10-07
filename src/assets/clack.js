@@ -1,8 +1,11 @@
 // @ts-check
-// The domino's clack (ADR 0003 decision 6): a burst of bright noise a few milliseconds long, for the
-// tile's edge, with a high, barely pitched tick under it. Anything longer or lower reads as a bloop. Every clack draws its own pitch, brightness, loudness and
-// length, and sometimes a quieter second tap, so no two sound the same. A cap on voices keeps rapid
-// clicking a clatter rather than a roar. Synthesised in the browser: there is no sound file.
+// The domino's clack (ADR 0003 decision 6), by modal synthesis: a struck plastic tile rings at a few
+// high, inharmonic frequencies that die away within tens of milliseconds, the higher ones first. A
+// sub-millisecond tick of bright noise is the strike itself; the ringing partials are what make it a
+// clack. Filtered noise alone sounds like a hand clap, and a low or sliding tone like a bloop. Every
+// clack draws its own pitch, ring and loudness, and sometimes a quieter second tap, so no two sound
+// the same. A cap on voices keeps rapid clicking a clatter rather than a roar. Synthesised in the
+// browser: there is no sound file.
 
 /** How many clacks may sound at once; any more are skipped. */
 export const MAX_VOICES = 6;
@@ -10,17 +13,25 @@ export const MAX_VOICES = 6;
 /** @param {() => number} random @param {number} low @param {number} high */
 const between = (random, low, high) => low + random() * (high - low);
 
+/** A small plastic block's mode ratios: inharmonic, which is what makes it a clack and not a note. */
+const RATIOS = [1, 1.47, 2.23, 2.71, 3.38];
+
 /**
- * One clack's sound.
+ * One clack: its partials (frequency, level, decay time constant in seconds), its loudness and its
+ * strike.
  * @param {() => number} random
  */
 export function clack(random) {
+  const base = between(random, 1700, 2500);
+  const ring = between(random, 0.028, 0.045);
   return {
-    filter: between(random, 2500, 6000),
-    q: between(random, 1.5, 4),
-    tone: between(random, 1400, 2600),
-    gain: between(random, 0.25, 0.45),
-    decay: between(random, 0.004, 0.014),
+    modes: RATIOS.map((ratio, i) => ({
+      freq: base * ratio * between(random, 0.985, 1.015),
+      level: between(random, 0.75, 1) / (1 + i * 0.6),
+      decay: ring / (1 + i * 0.55),
+    })),
+    gain: between(random, 0.12, 0.24),
+    tick: between(random, 0.5, 1),
   };
 }
 
@@ -62,40 +73,43 @@ export function play() {
     if (voices >= MAX_VOICES) return;
     voices++;
     const start = audio.currentTime + hit.at;
-    const end = start + hit.decay * 3;
+    const out = audio.createGain();
+    out.gain.value = hit.gain;
+    out.connect(audio.destination);
 
-    const edge = audio.createBufferSource();
-    edge.buffer = noise;
-    const band = audio.createBiquadFilter();
-    band.type = 'bandpass';
-    band.frequency.value = hit.filter;
-    band.Q.value = hit.q;
-    const edgeGain = audio.createGain();
-    edgeGain.gain.setValueAtTime(0.0001, start);
-    edgeGain.gain.exponentialRampToValueAtTime(hit.gain, start + 0.0005);
-    edgeGain.gain.exponentialRampToValueAtTime(0.0001, start + hit.decay);
-    edge.connect(band).connect(edgeGain).connect(audio.destination);
+    // The strike: under a millisecond of noise, high-passed so it ticks rather than thumps.
+    const strike = audio.createBufferSource();
+    strike.buffer = noise;
+    const bright = audio.createBiquadFilter();
+    bright.type = 'highpass';
+    bright.frequency.value = 3000;
+    const strikeGain = audio.createGain();
+    strikeGain.gain.setValueAtTime(hit.tick, start);
+    strikeGain.gain.setTargetAtTime(0, start, 0.0004);
+    strike.connect(bright).connect(strikeGain).connect(out);
+    strike.start(start);
+    strike.stop(start + 0.004);
 
-    const body = audio.createOscillator();
-    body.type = 'sine';
-    body.frequency.value = hit.tone;
-    const bodyGain = audio.createGain();
-    bodyGain.gain.setValueAtTime(0.0001, start);
-    bodyGain.gain.exponentialRampToValueAtTime(hit.gain * 0.3, start + 0.0005);
-    bodyGain.gain.exponentialRampToValueAtTime(0.0001, start + hit.decay * 0.6);
-    body.connect(bodyGain).connect(audio.destination);
-
-    edge.start(start);
-    edge.stop(end);
-    body.start(start);
-    body.stop(end);
+    // The tile ringing: each partial starts at once and dies exponentially.
+    let longest = 0;
+    for (const mode of hit.modes) {
+      const partial = audio.createOscillator();
+      partial.frequency.value = mode.freq;
+      const level = audio.createGain();
+      level.gain.setValueAtTime(mode.level, start);
+      level.gain.setTargetAtTime(0, start, mode.decay);
+      partial.connect(level).connect(out);
+      partial.start(start);
+      partial.stop(start + mode.decay * 7);
+      longest = Math.max(longest, mode.decay * 7);
+    }
     // Freed on a timer, not on `ended`: a suspended context may never report it, and a voice that
     // never frees would silence the domino for the rest of the visit.
     setTimeout(
       () => {
         voices--;
       },
-      (hit.at + hit.decay * 3) * 1000 + 50,
+      (hit.at + longest) * 1000 + 50,
     );
   }
 }
