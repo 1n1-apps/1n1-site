@@ -4,8 +4,7 @@
 // high, pure ring is glass; plastic is short, duller and a little rough. A
 // sub-millisecond tick of bright noise is the strike itself; the ringing partials are what make it a
 // clack. Filtered noise alone sounds like a hand clap, and a low or sliding tone like a bloop. Every
-// clack draws its own pitch, ring and loudness, and sometimes a quieter second tap, so no two sound
-// the same. A cap on voices keeps rapid clicking a clatter rather than a roar. Synthesised in the
+// clack draws its own pitch, ring and loudness, so no two sound the same. A cap on voices keeps rapid clicking a clatter rather than a roar. Synthesised in the
 // browser: there is no sound file.
 
 /** How many clacks may sound at once; any more are skipped. */
@@ -23,34 +22,27 @@ const RATIOS = [1, 1.47, 2.23, 2.71, 3.38];
  * @param {() => number} random
  */
 export function clack(random) {
-  const base = between(random, 1000, 1600);
-  const ring = between(random, 0.009, 0.015);
+  const base = between(random, 1300, 2000);
+  const ring = between(random, 0.015, 0.024);
   return {
     modes: RATIOS.map((ratio, i) => ({
       freq: base * ratio * between(random, 0.985, 1.015),
       level: between(random, 0.75, 1) / (1 + i * 0.6),
-      decay: ring / (1 + i * 0.9),
+      decay: ring / (1 + i * 0.75),
     })),
     gain: between(random, 0.12, 0.24),
     tick: between(random, 0.5, 1),
-    rough: between(random, 0.15, 0.35),
-    dull: between(random, 4500, 6500),
+    rough: between(random, 0.06, 0.16),
+    dull: between(random, 6500, 8500),
   };
 }
 
 /**
- * The taps one click makes: a clack, and about a third of the time a quieter one just after, like
- * a tile settling.
+ * The taps one click makes: always one clack, at once.
  * @param {() => number} random
  */
 export function hits(random) {
-  const first = { at: 0, ...clack(random) };
-  if (random() >= 0.33) return [first];
-  const second = clack(random);
-  return [
-    first,
-    { ...second, at: between(random, 0.025, 0.06), gain: first.gain * between(random, 0.35, 0.6) },
-  ];
+  return [{ at: 0, ...clack(random) }];
 }
 
 /* node:coverage disable */
