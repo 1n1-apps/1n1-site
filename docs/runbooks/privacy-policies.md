@@ -21,6 +21,11 @@ Android permission the app's **release** build's merged manifest uses, each with
 they differ in either direction, so the table is complete, not a selection. The app's own
 permissions (`<applicationId>.…`) are left out. Every page lists every version.
 
+The digest freezes a version's **words and data**, its `.md` file. Its presentation comes from
+templates every version shares (`src/_includes/policy.njk`, `policy-article.njk`,
+`permissions-table.njk`); a change there restyles every version at once, which is allowed, but it
+must never add, drop or reword what a version says.
+
 ## What a policy states
 
 In this order, in plain words, specific to the app:

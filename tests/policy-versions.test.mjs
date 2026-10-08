@@ -96,3 +96,41 @@ describe('frozen policy versions', () => {
     });
   }
 });
+
+/**
+ * The rendered site: the policy's address shows its latest version whole, and `policy.json` is that
+ * version's data. Rendered in memory, so it needs no build first.
+ */
+describe('the rendered policy pages', async () => {
+  const { default: Eleventy } = await import('@11ty/eleventy');
+  const pages = await new Eleventy('src', '_site', {
+    quietMode: true,
+    configPath: 'eleventy.config.js',
+  }).toJSON();
+  const page = (url) => pages.find((p) => p.url === url)?.content ?? '';
+  const latest = versionsOf(
+    pages
+      .filter((p) => /^\/privacy\/meantime\/v\d+\/$/.test(p.url))
+      .map((p) => ({
+        url: p.url,
+        data: { app: 'Meantime', version: Number(p.url.match(/v(\d+)/)[1]) },
+      })),
+    'Meantime',
+  ).at(-1);
+  const json = JSON.parse(page('/privacy/meantime/policy.json'));
+
+  it("shows the latest version's text and its whole permissions table at the policy's address", () => {
+    const current = page('/privacy/meantime/');
+    assert.match(current, new RegExp(`Version ${json.version}, effective`));
+    assert.equal(json.url, latest.url);
+    for (const { name } of json.permissions)
+      assert.ok(current.includes(`<code>${name}</code>`), name);
+    assert.match(current, /<h2 id="what-leaves-your-phone"|What leaves your phone/);
+  });
+
+  it('renders the frozen version page with the same text', () => {
+    const frozen = page(latest.url);
+    for (const { name } of json.permissions)
+      assert.ok(frozen.includes(`<code>${name}</code>`), name);
+  });
+});
