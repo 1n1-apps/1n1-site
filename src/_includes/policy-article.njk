@@ -17,7 +17,7 @@
 </section>
 <div class="prose">
 {{ policyBody | safe }}
-<ul class="plain versions">
+<ul class="versions">
 {% for v in versions | reverse %}<li>{% if v.url == policyUrl %}Version {{ v.data.version }}, effective {{ v.data.effective | longDate }} (this one){% else %}<a href="{{ v.url }}">Version {{ v.data.version }}</a>, effective {{ v.data.effective | longDate }}{% endif %}</li>
 {% endfor %}</ul>
 </div>

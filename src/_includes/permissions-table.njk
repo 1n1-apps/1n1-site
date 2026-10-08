@@ -1,11 +1,12 @@
 {#- The policy's permissions table, from the version's own `permissions` front matter. The same rows
-    are published in `policy.json`, which a release compares with its build. -#}
-{#- It scrolls sideways where the permission names are wider than the page, so it takes focus. -#}
+    are published in `policy.json`, which a release compares with its build. On a phone each row
+    stacks, its cells labelled from `data-label`. -#}
+{#- It can still scroll sideways at an unusual width, so it takes focus. -#}
 <section class="tablewrap" aria-label="Android permissions" tabindex="0">
-<table>
+<table class="permissions">
 <thead><tr><th scope="col">Android permission</th><th scope="col">What it's for</th><th scope="col">If you say no</th></tr></thead>
 <tbody>
-{% for p in permissions %}<tr><td><code>{{ p.name }}</code></td><td>{{ p.for }}</td><td>{{ p.refused }}</td></tr>
+{% for p in permissions %}<tr><td data-label="Android permission"><code>{{ p.name }}</code></td><td data-label="What it's for">{{ p.for }}</td><td data-label="If you say no">{{ p.refused }}</td></tr>
 {% endfor %}</tbody>
 </table>
 </section>
