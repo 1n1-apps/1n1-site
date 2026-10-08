@@ -1,0 +1,24 @@
+{#- One version of an app's privacy policy. Set before including: `policy` (the version's data),
+    `policyBody` (its rendered text), `policyUrl` (its own frozen address) and `versions` (every
+    version of this app's policy, oldest first). -#}
+<article class="policy">
+<h1>{{ policy.app }} privacy policy</h1>
+<p class="updated">Version {{ policy.version }}, effective <time datetime="{{ policy.effective | isoDate }}">{{ policy.effective | longDate }}</time></p>
+<section class="summary" aria-labelledby="in-short">
+<h2 id="in-short">In short</h2>
+<div class="tablewrap">
+<table>
+<thead><tr><th scope="col">What</th><th scope="col">Where it goes</th><th scope="col">Why</th></tr></thead>
+<tbody>
+{% for r in policy.summary %}<tr><td>{{ r.what }}</td><td>{{ r.where }}</td><td>{{ r.why }}</td></tr>
+{% endfor %}</tbody>
+</table>
+</div>
+</section>
+<div class="prose">
+{{ policyBody | safe }}
+<ul class="plain versions">
+{% for v in versions | reverse %}<li>{% if v.url == policyUrl %}Version {{ v.data.version }}, effective {{ v.data.effective | longDate }} (this one){% else %}<a href="{{ v.url }}">Version {{ v.data.version }}</a>, effective {{ v.data.effective | longDate }}{% endif %}</li>
+{% endfor %}</ul>
+</div>
+</article>

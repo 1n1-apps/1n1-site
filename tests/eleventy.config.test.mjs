@@ -73,6 +73,18 @@ describe('the Eleventy configuration', () => {
     assert.ok(e.calls.passthrough.includes('src/app-ads.txt'));
   });
 
+  it('collects the policy versions and registers the policy filters', () => {
+    const e = fakeEleventy();
+    configure(e);
+    const asked = [];
+    const api = { getFilteredByTag: (tag) => (asked.push(tag), ['v1']) };
+    assert.deepEqual(e.calls.collections.policyVersions(api), ['v1']);
+    assert.deepEqual(asked, ['policy-version']);
+    for (const name of ['versionsOf', 'latestVersion', 'policyJson']) {
+      assert.equal(typeof e.calls.filters[name], 'function', name);
+    }
+  });
+
   it('orders the apps and the policies by their front matter', () => {
     const e = fakeEleventy();
     configure(e);

@@ -1,0 +1,11 @@
+{#- The policy's permissions table, from the version's own `permissions` front matter. The same rows
+    are published in `policy.json`, which a release compares with its build. -#}
+{#- It scrolls sideways where the permission names are wider than the page, so it takes focus. -#}
+<section class="tablewrap" aria-label="Android permissions" tabindex="0">
+<table>
+<thead><tr><th scope="col">Android permission</th><th scope="col">What it's for</th><th scope="col">If you say no</th></tr></thead>
+<tbody>
+{% for p in permissions %}<tr><td><code>{{ p.name }}</code></td><td>{{ p.for }}</td><td>{{ p.refused }}</td></tr>
+{% endfor %}</tbody>
+</table>
+</section>

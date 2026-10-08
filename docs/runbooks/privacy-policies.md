@@ -1,8 +1,25 @@
 # Runbook: privacy policies
 
 One policy per app, at `/privacy/<app>/`, where `<app>` is the store name lowercased
-(`/privacy/meantime/`, as the brief fixes it), written in `src/privacy/<app>.md`. A store is given
-this URL once and it never changes.
+(`/privacy/meantime/`, as the brief fixes it). A store is given this URL once and it never changes.
+
+## Versions
+
+Each version of a policy is its own file and its own page, and is never edited once it is live
+(Meantime's ADR 0306 decision 7, in the app repository):
+
+| What | Where |
+| --- | --- |
+| Version `n`'s text, summary and permissions table | `src/privacy/<app>/v<n>.md`, published at `/privacy/<app>/v<n>/` |
+| The policy's address, showing the latest version | `src/privacy/<app>.njk` (renders the highest `v<n>`) |
+| The latest version as data, for the app's release check | `/privacy/<app>/policy.json`, built by `src/privacy/<app>-policy.njk` |
+| The digest of every live version | `src/privacy/frozen.json`; `tests/policy-versions.test.mjs` fails if a version file changes |
+
+A version's front matter carries `version`, `effective`, the `summary` table, and `permissions`: every
+Android permission the app's **release** build's merged manifest uses, each with `name`, `for` and
+`refused`. The app's release workflow compares that list with its build and refuses a release when
+they differ in either direction, so the table is complete, not a selection. The app's own
+permissions (`<applicationId>.…`) are left out. Every page lists every version.
 
 ## What a policy states
 
@@ -64,8 +81,13 @@ store name and its repository as "the app repository", never by codename.
 - **At every release of an app:** before the build goes to a store, check the policy against the
   release (its permissions, its dependencies, its data runbooks). If anything differs, the policy PR
   merges first, so the live policy is never behind the app people install.
-- A changed policy gets a new effective date. Keep the URL. Git history is the record of previous
-  versions.
+- **A change is a new version, never an edit.** Copy the latest `src/privacy/<app>/v<n>.md` to
+  `v<n+1>.md`; set its `permalink` to `/privacy/<app>/v<n+1>/`, its `title`, `version: <n+1>` and
+  `effective` (the day it deploys); make the change; add its digest to `src/privacy/frozen.json`
+  (the test's failure message shows the value). The policy's address and `policy.json` follow on
+  their own. Tell the app's release which version is now in force: its release record names it.
+- A version's file is fixed once it deploys. Before that — in its own PR — it may still change; then
+  recompute its digest.
 - Before Meantime's first store submission the policy must be live at its final URL; after
   submission, a changed policy may also need re-declaring in the store's data-safety form. Tell the
   owner which, in the PR.

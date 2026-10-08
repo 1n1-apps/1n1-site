@@ -4,21 +4,10 @@ section: privacy
 up: /privacy/
 upLabel: Privacy
 ---
-<article class="policy">
-<h1>{{ app }} privacy policy</h1>
-<p class="updated">Effective <time datetime="{{ effective | isoDate }}">{{ effective | longDate }}</time></p>
-<section class="summary" aria-labelledby="in-short">
-<h2 id="in-short">In short</h2>
-<div class="tablewrap">
-<table>
-<thead><tr><th scope="col">What</th><th scope="col">Where it goes</th><th scope="col">Why</th></tr></thead>
-<tbody>
-{% for r in summary %}<tr><td>{{ r.what }}</td><td>{{ r.where }}</td><td>{{ r.why }}</td></tr>
-{% endfor %}</tbody>
-</table>
-</div>
-</section>
-<div class="prose">
-{{ content | safe }}
-</div>
-</article>
+{#- The layout of one frozen policy version, `src/privacy/<app>/v<n>.md`. The policy's current
+    address renders the latest of these through the same partial (`src/privacy/<app>.njk`). -#}
+{% set policy = { app: app, version: version, effective: effective, summary: summary } %}
+{% set policyBody = content %}
+{% set policyUrl = page.url %}
+{% set versions = collections.policyVersions | versionsOf(app) %}
+{% include "policy-article.njk" %}

@@ -37,14 +37,14 @@ bun run lint && bun run typecheck && bun run check:links && bun run check:a11y
 
 ## Adding an app
 
-Add its icon, `src/apps/<app>.md` and `src/privacy/<app>.md`, then build and check. No template
-changes. The steps are in [`docs/runbooks/adding-an-app.md`](docs/runbooks/adding-an-app.md).
+Add its icon, `src/apps/<app>.md` and its privacy policy (`src/privacy/<app>/v1.md` and the two pages
+beside it), then build and check. No template changes. The steps are in [`docs/runbooks/adding-an-app.md`](docs/runbooks/adding-an-app.md).
 
 ## Updating a privacy policy
 
 Whenever an app changes what it does with data, and before every store release, check the policy
-against the app's code and change `src/privacy/<app>.md` in the same delivery, with a new effective
-date. The steps are in [`docs/runbooks/privacy-policies.md`](docs/runbooks/privacy-policies.md).
+against the app's code. A change is a new version, `src/privacy/<app>/v<n+1>.md`, in the same
+delivery, never an edit to a live one. The steps are in [`docs/runbooks/privacy-policies.md`](docs/runbooks/privacy-policies.md).
 
 ## Deploying
 
