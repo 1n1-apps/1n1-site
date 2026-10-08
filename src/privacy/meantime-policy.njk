@@ -1,0 +1,8 @@
+---
+# Rendered from the version pages, so Eleventy renders those first.
+eleventyImport:
+  collections: ["policyVersions"]
+permalink: /privacy/meantime/policy.json
+eleventyExcludeFromCollections: true
+---
+{{ collections.policyVersions | latestVersion("Meantime") | policyJson | safe }}

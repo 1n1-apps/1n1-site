@@ -1,0 +1,23 @@
+---
+# Rendered from the version pages, so Eleventy renders those first.
+eleventyImport:
+  collections: ["policyVersions"]
+layout: base.njk
+section: privacy
+up: /privacy/
+upLabel: Privacy
+tags: policy
+order: 1
+permalink: /privacy/meantime/
+title: Meantime privacy policy
+description: What Meantime does with your data, in plain words.
+app: Meantime
+---
+{#- The policy's one address shows its latest version, rendered exactly as its frozen page
+    (`src/privacy/meantime/v<n>.md`). A new version is a new file there, never an edit. -#}
+{% set versions = collections.policyVersions | versionsOf(app) %}
+{% set latest = versions | last %}
+{% set policy = latest.data %}
+{% set policyBody = latest.content %}
+{% set policyUrl = latest.url %}
+{% include "policy-article.njk" %}

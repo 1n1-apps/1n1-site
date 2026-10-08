@@ -77,3 +77,13 @@ TypeScript as development tools for the checks the contract names.
 ## Related ADRs
 
 - [ADR 0003](0003-two-halves-dark-first.md) — the design this build renders.
+
+## Amendment (2026-10-08, Meantime E16-T2): privacy policies are versioned files
+
+A policy is no longer one file, `src/privacy/<app>.md`, edited in place. Each version is its own
+frozen file, `src/privacy/<app>/v<n>.md`, published at `/privacy/<app>/v<n>/`; the policy's address
+renders the latest through `src/privacy/<app>.njk`; and `/privacy/<app>/policy.json` publishes that
+version's number, date and permissions table, which the app's release workflow compares with its
+build. `src/privacy/frozen.json` and `tests/policy-versions.test.mjs` keep a live version from being
+edited. Decided in Meantime's ADR 0306 decision 7 (the app repository); the procedure is
+`docs/runbooks/privacy-policies.md` § Versions.

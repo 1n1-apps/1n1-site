@@ -48,6 +48,51 @@ export function longDate(value) {
   return `${d} ${MONTHS[m - 1]} ${y}`;
 }
 
+// Privacy-policy versions (Meantime's ADR 0306 decision 7, in the app repository). Each version is
+// its own frozen file, `src/privacy/<app>/v<n>.md`, published at `/privacy/<app>/v<n>/`; the
+// policy's own address shows the latest, and `policy.json` beside it is what a release checks its
+// build against.
+
+// One app's versions, oldest first. They must run v1, v2, … with no gap or repeat: a release record
+// names a version by number, and it has to be the page it meant.
+export function versionsOf(items, app) {
+  const versions = items
+    .filter((item) => item.data.app === app)
+    .sort((a, b) => a.data.version - b.data.version);
+  if (versions.length === 0) throw new Error(`no policy versions for ${app}`);
+  versions.forEach((item, index) => {
+    if (item.data.version !== index + 1) {
+      throw new Error(`${app}'s policy versions skip or repeat v${index + 1}`);
+    }
+  });
+  return versions;
+}
+
+export function latestVersion(items, app) {
+  return versionsOf(items, app).at(-1);
+}
+
+// The machine-readable policy: its number, when it took effect, and the permissions table.
+export function policyJson(item) {
+  const { app, version, effective, permissions } = item.data;
+  if (!Array.isArray(permissions)) throw new Error(`${app} v${version} has no permissions table`);
+  return JSON.stringify(
+    {
+      app,
+      version,
+      effective: isoDate(effective),
+      url: item.url,
+      permissions: permissions.map((row) => ({
+        name: row.name,
+        for: row.for,
+        refused: row.refused,
+      })),
+    },
+    null,
+    2,
+  );
+}
+
 export default function (eleventyConfig) {
   const mark = markSvg(readFileSync('src/_includes/mark.svg', 'utf8'));
   eleventyConfig.addShortcode('mark', () => mark);
@@ -68,7 +113,12 @@ export default function (eleventyConfig) {
     api.getFilteredByTag('policy').sort((a, b) => a.data.order - b.data.order),
   );
 
+  eleventyConfig.addCollection('policyVersions', (api) => api.getFilteredByTag('policy-version'));
+
   eleventyConfig.addFilter('isoDate', isoDate);
+  eleventyConfig.addFilter('versionsOf', versionsOf);
+  eleventyConfig.addFilter('latestVersion', latestVersion);
+  eleventyConfig.addFilter('policyJson', policyJson);
   eleventyConfig.addFilter('longDate', longDate);
 
   return {
