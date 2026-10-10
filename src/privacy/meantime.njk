@@ -13,11 +13,12 @@ title: Meantime privacy policy
 description: What Meantime does with your data, in plain words.
 app: Meantime
 ---
-{#- The policy's one address shows its latest version, rendered exactly as its frozen page
-    (`src/privacy/meantime/v<n>.md`). A new version is a new file there, never an edit. -#}
-{% set versions = collections.policyVersions | versionsOf(app) %}
-{% set latest = versions | last %}
-{% set policy = latest.data %}
-{% set policyBody = latest.content %}
-{% set policyUrl = latest.url %}
+{#- The policy's one address shows the version in force (`src/_data/policiesInForce.json`),
+    rendered exactly as its frozen page (`src/privacy/meantime/v<n>.md`). A new version is a new
+    file there, never an edit, and it comes into force only when a release promotes it. -#}
+{% set history = collections.policyVersions | policyHistory(app, policiesInForce) %}
+{% set current = collections.policyVersions | inForce(app, policiesInForce) %}
+{% set policy = current.item.data %}
+{% set policyBody = current.item.content %}
+{% set policyUrl = current.item.url %}
 {% include "policy-article.njk" %}

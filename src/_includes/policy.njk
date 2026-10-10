@@ -5,9 +5,9 @@ up: /privacy/
 upLabel: Privacy
 ---
 {#- The layout of one frozen policy version, `src/privacy/<app>/v<n>.md`. The policy's current
-    address renders the latest of these through the same partial (`src/privacy/<app>.njk`). -#}
-{% set policy = { app: app, version: version, effective: effective, summary: summary } %}
+    address renders the version in force through the same partial (`src/privacy/<app>.njk`). -#}
+{% set policy = { app: app, version: version, summary: summary } %}
 {% set policyBody = content %}
 {% set policyUrl = page.url %}
-{% set versions = collections.policyVersions | versionsOf(app) %}
+{% set history = collections.policyVersions | policyHistory(app, policiesInForce) %}
 {% include "policy-article.njk" %}

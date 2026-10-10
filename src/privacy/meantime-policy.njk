@@ -5,4 +5,4 @@ eleventyImport:
 permalink: /privacy/meantime/policy.json
 eleventyExcludeFromCollections: true
 ---
-{{ collections.policyVersions | latestVersion("Meantime") | policyJson | safe }}
+{{ collections.policyVersions | inForce("Meantime", policiesInForce) | policyJson | safe }}
