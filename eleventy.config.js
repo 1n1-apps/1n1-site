@@ -49,9 +49,11 @@ export function longDate(value) {
 }
 
 // Privacy-policy versions (Meantime's ADR 0306 decision 7, in the app repository). Each version is
-// its own frozen file, `src/privacy/<app>/v<n>.md`, published at `/privacy/<app>/v<n>/`; the
-// policy's own address shows the latest, and `policy.json` beside it is what a release checks its
-// build against.
+// its own frozen file, `src/privacy/<app>/v<n>.md`, published at `/privacy/<app>/v<n>/` as soon as
+// it merges. Which version is **in force** is a separate record, `src/_data/policiesInForce.json`
+// (owner, 2026-10-10): an app's code merges weeks before its release, so a new version is published
+// with the code and promoted only when the release that needs it ships. The policy's own address and
+// `policy.json` beside it show the version in force, and a release checks its build against that.
 
 // One app's versions, oldest first. They must run v1, v2, … with no gap or repeat: a release record
 // names a version by number, and it has to be the page it meant.
@@ -68,19 +70,58 @@ export function versionsOf(items, app) {
   return versions;
 }
 
-export function latestVersion(items, app) {
-  return versionsOf(items, app).at(-1);
+// Every version of one app's policy, oldest first, with when it was in force: `from` and `until`
+// (exclusive), or `from: null` for a version published and not yet in force. The record lists the
+// versions an app has promoted, in order, each with the day it came into force; a version is never
+// promoted twice, and the record never names a version that has no file.
+export function policyHistory(items, app, record) {
+  const versions = versionsOf(items, app);
+  const entries = record?.[app];
+  if (!Array.isArray(entries) || entries.length === 0) {
+    throw new Error(`no version of ${app}'s policy is in force`);
+  }
+  entries.forEach((entry, index) => {
+    const previous = entries[index - 1];
+    if (!versions.some((item) => item.data.version === entry.version)) {
+      throw new Error(`${app}'s policy v${entry.version} is in force but has no file`);
+    }
+    if (previous && entry.version <= previous.version) {
+      throw new Error(`${app}'s policy versions come into force out of order at v${entry.version}`);
+    }
+    if (previous && isoDate(entry.from) < isoDate(previous.from)) {
+      throw new Error(
+        `${app}'s policy v${entry.version} comes into force before v${previous.version}`,
+      );
+    }
+  });
+  return versions.map((item) => {
+    const index = entries.findIndex((entry) => entry.version === item.data.version);
+    if (index < 0) return { item, from: null, until: null };
+    return {
+      item,
+      from: isoDate(entries[index].from),
+      until: index + 1 < entries.length ? isoDate(entries[index + 1].from) : null,
+    };
+  });
 }
 
-// The machine-readable policy: its number, when it took effect, and the permissions table.
-export function policyJson(item) {
-  const { app, version, effective, permissions } = item.data;
+// The version in force: the last one the record promoted.
+export function inForce(items, app, record) {
+  return policyHistory(items, app, record)
+    .filter((entry) => entry.from !== null)
+    .at(-1);
+}
+
+// The machine-readable policy in force: its number, the day it came into force, and the
+// permissions table.
+export function policyJson({ item, from }) {
+  const { app, version, permissions } = item.data;
   if (!Array.isArray(permissions)) throw new Error(`${app} v${version} has no permissions table`);
   return JSON.stringify(
     {
       app,
       version,
-      effective: isoDate(effective),
+      effective: from,
       url: item.url,
       permissions: permissions.map((row) => ({
         name: row.name,
@@ -117,7 +158,8 @@ export default function (eleventyConfig) {
 
   eleventyConfig.addFilter('isoDate', isoDate);
   eleventyConfig.addFilter('versionsOf', versionsOf);
-  eleventyConfig.addFilter('latestVersion', latestVersion);
+  eleventyConfig.addFilter('policyHistory', policyHistory);
+  eleventyConfig.addFilter('inForce', inForce);
   eleventyConfig.addFilter('policyJson', policyJson);
   eleventyConfig.addFilter('longDate', longDate);
 

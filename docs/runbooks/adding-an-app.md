@@ -19,8 +19,10 @@ An app arrives as two files and its icon. No template changes.
    Words come from the approved copy in `1n1-studio/copy/`.
 3. **The privacy policy:** version 1 at `src/privacy/<app>/v1.md`, the policy's address
    `src/privacy/<app>.njk` and its `src/privacy/<app>-policy.njk` (`policy.json`), each copied from
-   Meantime's and renamed, and v1's digest in `src/privacy/frozen.json`, all written by
-   `privacy-policies.md` § Versions. It must be live before the app is submitted to a store.
+   Meantime's and renamed, v1's digest in `src/privacy/frozen.json`, and the app's entry in
+   `src/_data/policiesInForce.json` (`[{ "version": 1, "from": "<the day it goes live>" }]`), all
+   written by `privacy-policies.md` § Versions. It must be in force before the app is submitted to a
+   store.
 4. **Build and check:** `bun run build`, `lint`, `check:links`, `check:a11y`. The home page and the
    apps list pick the app up from its file.
 5. **Evidence:** screenshots of the new pages at a phone and a desktop width in both themes, and the

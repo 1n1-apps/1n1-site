@@ -1,9 +1,16 @@
 {#- One version of an app's privacy policy. Set before including: `policy` (the version's data),
-    `policyBody` (its rendered text), `policyUrl` (its own frozen address) and `versions` (every
-    version of this app's policy, oldest first). -#}
+    `policyBody` (its rendered text), `policyUrl` (its own frozen address) and `history` (every
+    version of this app's policy, oldest first, with when each was in force: `policyHistory`). -#}
+{%- macro inForceSpan(entry) -%}
+{%- if entry.from === null -%}published, not yet in force
+{%- elif entry.until === null -%}in force since {{ entry.from | longDate }}
+{%- else -%}in force {{ entry.from | longDate }} to {{ entry.until | longDate }}{%- endif -%}
+{%- endmacro -%}
+{%- set this = null -%}
+{%- for v in history -%}{%- if v.item.url == policyUrl -%}{%- set this = v -%}{%- endif -%}{%- endfor -%}
 <article class="policy">
 <h1>{{ policy.app }} privacy policy</h1>
-<p class="updated">Version {{ policy.version }}, effective <time datetime="{{ policy.effective | isoDate }}">{{ policy.effective | longDate }}</time></p>
+<p class="updated">Version {{ policy.version }}, {% if this.from === null %}published, not yet in force{% else %}in force since <time datetime="{{ this.from }}">{{ this.from | longDate }}</time>{% if this.until !== null %}, until <time datetime="{{ this.until }}">{{ this.until | longDate }}</time>{% endif %}{% endif %}</p>
 <section class="summary" aria-labelledby="in-short">
 <h2 id="in-short">In short</h2>
 <div class="tablewrap">
@@ -18,7 +25,7 @@
 <div class="prose">
 {{ policyBody | safe }}
 <ul class="versions">
-{% for v in versions | reverse %}<li>{% if v.url == policyUrl %}Version {{ v.data.version }}, effective {{ v.data.effective | longDate }} (this one){% else %}<a href="{{ v.url }}">Version {{ v.data.version }}</a>, effective {{ v.data.effective | longDate }}{% endif %}</li>
+{% for v in history | reverse %}<li>{% if v.item.url == policyUrl %}Version {{ v.item.data.version }}, {{ inForceSpan(v) }} (this one){% else %}<a href="{{ v.item.url }}">Version {{ v.item.data.version }}</a>, {{ inForceSpan(v) }}{% endif %}</li>
 {% endfor %}</ul>
 </div>
 </article>

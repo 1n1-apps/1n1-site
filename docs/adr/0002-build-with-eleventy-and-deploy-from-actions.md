@@ -87,3 +87,14 @@ version's number, date and permissions table, which the app's release workflow c
 build. `src/privacy/frozen.json` and `tests/policy-versions.test.mjs` keep a live version from being
 edited. Decided in Meantime's ADR 0306 decision 7 (the app repository); the procedure is
 `docs/runbooks/privacy-policies.md` § Versions.
+
+## Amendment (2026-10-10, owner): a policy version is published at merge, and in force at release
+
+An app's code merges weeks before its release, and the policy must describe what people have
+installed. The policy's address and `policy.json` no longer render the highest version: they render
+the version **in force**, the last one recorded in `src/_data/policiesInForce.json`, each entry the
+day a release brought it into force. A new version is published at `/privacy/<app>/v<n>/` as soon as
+its PR merges, marked "published, not yet in force", and promoted by a separate one-line PR before
+the release that needs it uploads. `policy.json`'s `effective` is that day, read from the record; a
+version file carries no date. The procedure is `docs/runbooks/privacy-policies.md` § Changing a
+policy; the build refuses a record that is out of order or names a missing version.

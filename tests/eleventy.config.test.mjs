@@ -80,7 +80,7 @@ describe('the Eleventy configuration', () => {
     const api = { getFilteredByTag: (tag) => (asked.push(tag), ['v1']) };
     assert.deepEqual(e.calls.collections.policyVersions(api), ['v1']);
     assert.deepEqual(asked, ['policy-version']);
-    for (const name of ['versionsOf', 'latestVersion', 'policyJson']) {
+    for (const name of ['versionsOf', 'policyHistory', 'inForce', 'policyJson']) {
       assert.equal(typeof e.calls.filters[name], 'function', name);
     }
   });
