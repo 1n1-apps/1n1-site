@@ -1,3 +1,6 @@
 {
-  "Meantime": [{ "version": 1, "from": "2026-10-08" }]
+  "Meantime": [
+    { "version": 1, "from": "2026-10-08" },
+    { "version": 2, "from": "2026-10-15" }
+  ]
 }
