@@ -25,13 +25,13 @@ features:
   - title: Habits with steps
     text: Build a habit or task from steps, two levels deep. Each step completes its own way, with a tick, a number, a written answer, a choice or a timer.
   - title: Tracking that shows your progress
-    text: Completion rates and streaks for every habit, repeating task, log and alarm, over the period you choose.
+    text: Completion rates, streaks and charts for every habit, repeating task, log and alarm, over the period you choose.
   - title: The weather in your week
     text: The forecast sits right beside your plans, so you can plan the week around it in one place.
   - title: Logs for anything
     text: Keep track of your weight, mood or sleep without a schedule. Record whenever you like; nothing is ever due.
   - title: On your home screen
-    text: Seventeen widgets put your day, your week and the time on your home screen, eight of them free.
+    text: Seventeen widgets put your day, your week and the time on your home screen, all but one of them free.
   - title: Make it yours
     text: Over 450 icons and twelve colours for your items, and light, warm or dark app themes that can change with the time of day.
   - title: Your data stays yours
@@ -43,10 +43,8 @@ plus:
   unlocks:
     - title: Plans
       text: Gather a trip or a project into one itinerary, and narrow your week or calendar to it.
-    - title: Full tracking
-      text: Charts, a calendar of each item's days, records, and every step tracked on its own.
-    - title: Widgets that do more
-      text: Nine more widgets, and completing items or starting a timer from the home screen.
+    - title: Tick things off from your home screen
+      text: Complete items from your widgets, the day summary and reminders, without opening the app.
     - title: A fuller day summary
       text: The hours ahead in the day-summary notification.
     - title: App icons
